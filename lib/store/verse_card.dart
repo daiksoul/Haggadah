@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/verse.dart';
+import 'package:haggah/data/localfile.dart';
 
 class VerseCardPage extends StatefulWidget {
   const VerseCardPage({super.key});
@@ -12,6 +13,21 @@ class VerseCardState extends State<VerseCardPage> {
   late VerseCollection _collect;
 
   final List<List> _verseList = [];
+
+  @override
+  void dispose(){
+    super.dispose();
+    Future.delayed(
+      Duration.zero,
+          (){
+        writeLocalCollection(_collect).then(
+          (file){
+            print(file.toString());
+          }
+        );
+      },
+    );
+  }
 
   @override
   void initState() {

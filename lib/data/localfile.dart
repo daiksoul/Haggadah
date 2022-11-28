@@ -15,8 +15,13 @@ Future<File> getLocalCollection(String name)async{
   return File('$path/collections/$name');
 }
 
+Future<FileSystemEntity> deleteLocalCollection(VerseCollection collection) async{
+  final file = await getLocalCollection('${collection.uid}.json');
+  return await file.delete();
+}
+
 Future<File> writeLocalCollection(VerseCollection collection) async{
-  final file = await getLocalCollection('${collection.title}.json');
+  final file = await getLocalCollection('${collection.uid}.json');
   return (await file.writeAsString(jsonEncode(collection.toJson())));
 }
 

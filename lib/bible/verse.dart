@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/dat.dart';
+import 'package:haggah/data/localfile.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -220,8 +221,7 @@ class VerseState extends State<VersePage> {
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
-                                                state.remove(
-                                                    state.collection[index]);
+                                                state.remove(state.collection[index]);
                                               },
                                               child: const Text("삭제"),
                                             ),
@@ -253,6 +253,7 @@ class VerseState extends State<VersePage> {
                                           const Duration(milliseconds: 500),
                                     ),
                                   );
+                                  writeLocalCollection(state.collection[index]);
                                   Navigator.pop(context);
                                   setState(
                                     () {
@@ -415,7 +416,7 @@ class VerseCollection {
   VerseCollection.fromJson(Map<String, dynamic> json)
       : uid = json['uid'] as String,
         title = json['title'] as String,
-        verses = (json['verses'] as List<Map<String, dynamic>>)
+        verses = (json['verses'] as List)
             .map((e) => MultiVerse.fromJson(e))
             .toList();
 }
@@ -465,7 +466,7 @@ class MultiVerse {
       };
 
   MultiVerse.fromJson(Map<String, dynamic> json)
-      : verse = (json["verses"] as List<Map<String, dynamic>>)
+      : verse = (json["verses"] as List)
             .map((e) => Verse.fromJson(e))
             .toList();
 }

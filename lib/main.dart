@@ -31,14 +31,14 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState(){
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
     Future.delayed(
       Duration.zero,
       (){
         readAllLocalCollection().then(
           (val){
             for(final collect in val){
-              Provider.of<AppStorageState>(context,listen: true).add(collect);
+              Provider.of<AppStorageState>(context,listen: false).add(collect);
             }
           }
         );
@@ -47,35 +47,16 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state){
-    if(state == AppLifecycleState.detached){
-      Future.delayed(
-        Duration.zero,
-            (){
-          final list = Provider.of<AppStorageState>(context,listen: false).collection;
-          for(final collect in list){
-            writeLocalCollection(collect).then(
-                (file){
-                  print(file.toString());
-                }
-            );
-          }
-        },
-      );
-    }
-  }
-
-  @override
   void dispose(){
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    // WidgetsBinding.instance.removeObserver(this);
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hagadah',
+      title: 'Haggadah',
       scrollBehavior: const MaterialScrollBehavior().copyWith(scrollbars: false),
       theme: ThemeData(
         // This is the theme of your application.

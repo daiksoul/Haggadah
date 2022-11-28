@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/verse.dart';
+import 'package:haggah/data/localfile.dart';
 import 'package:provider/provider.dart';
 
 class StoragePage extends StatefulWidget {
@@ -159,11 +160,18 @@ Card genCard(BuildContext context, VerseCollection collection) {
                   //   text: const Text("수정"),
                   //   onPressed: () {},
                   // ),
-                  labeledIconButton(
-                    icon: const Icon(Icons.delete),
-                    text: const Text("삭제"),
-                    onPressed: () {},
-                  )
+                  Consumer<AppStorageState>(
+                    builder: (context,state,_){
+                      return labeledIconButton(
+                        icon: const Icon(Icons.delete),
+                        text: const Text("삭제"),
+                        onPressed: () {
+                          deleteLocalCollection(collection);
+                          state.remove(collection);
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -198,17 +206,20 @@ class AppStorageState extends ChangeNotifier {
 
   void add(VerseCollection collection) {
     _collections.add(collection);
+    writeLocalCollection(collection);
     notifyListeners();
   }
 
   void remove(VerseCollection collection) {
     _collections.removeWhere((element) => element.uid == collection.uid);
+    deleteLocalCollection(collection);
     notifyListeners();
   }
 
   void update(VerseCollection collection) {
     _collections[_collections
         .indexWhere((element) => element.uid == collection.uid)] = collection;
+    writeLocalCollection(collection);
     notifyListeners();
   }
 }

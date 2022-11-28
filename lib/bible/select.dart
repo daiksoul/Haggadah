@@ -179,6 +179,7 @@ class ChapterSelectState extends State<ChapterSelectPage> {
     currBook = (ModalRoute.of(context)?.settings.arguments as Book) ?? Book.gen;
     return Scaffold(
       appBar: AppBar(
+        title: Text(currBook.kor),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
@@ -195,22 +196,19 @@ class ChapterSelectState extends State<ChapterSelectPage> {
           for (var t = 1; t <= currBook.chapters; t++)
             ElevatedButton(
               style: ButtonStyle(
-                  shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))),
-                shadowColor: MaterialStateProperty.all(Colors.transparent)
-              ),
+                  shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)))),
+                  shadowColor: MaterialStateProperty.all(Colors.transparent)),
               onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  "/verses",
-                  arguments: BookNChap(currBook,t)
-                );
+                Navigator.pushNamed(context, "/verses",
+                    arguments: BookNChap(currBook, t));
               },
               child: Text(
                 t.toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
-            )
+            ),
         ],
       ),
     );
