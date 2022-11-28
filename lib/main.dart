@@ -4,8 +4,9 @@ import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/localfile.dart';
 import 'package:haggah/home.dart';
 import 'package:haggah/store/storage.dart';
-import 'package:haggah/store/test.dart';
+import 'package:haggah/store/card_test.dart';
 import 'package:haggah/store/verse_card.dart';
+import 'package:haggah/store/voice_test.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -13,7 +14,8 @@ void main() {
     MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context)=>ApplicationState()),
-          ChangeNotifierProvider(create: (context)=>AppStorageState())
+          ChangeNotifierProvider(create: (context)=>AppStorageState()),
+          ChangeNotifierProvider(create: (context)=>AppSpeechTextState()),
         ],
         child: const MyApp(),
     )
@@ -35,6 +37,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
     Future.delayed(
       Duration.zero,
       (){
+        Provider.of<AppSpeechTextState>(context,listen: false).init();
         readAllLocalCollection().then(
           (val){
             for(final collect in val){
@@ -48,6 +51,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose(){
+    Provider.of<AppSpeechTextState>(context,listen: false).stop();
     super.dispose();
     // WidgetsBinding.instance.removeObserver(this);
   }
@@ -119,7 +123,8 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         "/verses": (BuildContext context) => const VersePage(),
         "/collections": (BuildContext context) => const StoragePage(),
         "/card": (BuildContext context) => const VerseCardPage(),
-        "/practice": (BuildContext context) => const TestPage()
+        "/practice": (BuildContext context) => const CardTestPage(),
+        "/test": (BuildContext context) => const VocalTestPage()
       }
     );
   }

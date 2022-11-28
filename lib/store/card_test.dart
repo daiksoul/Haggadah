@@ -4,14 +4,14 @@ import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/verse.dart';
 
-class TestPage extends StatefulWidget {
-  const TestPage({super.key});
+class CardTestPage extends StatefulWidget {
+  const CardTestPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => TestState();
+  State<StatefulWidget> createState() => CardTestState();
 }
 
-class TestState extends State<TestPage> with SingleTickerProviderStateMixin {
+class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMixin {
   Alignment _dragAlgin = Alignment.center;
   late AnimationController _animController;
   late Animation<Alignment> _animation;
@@ -67,7 +67,6 @@ class TestState extends State<TestPage> with SingleTickerProviderStateMixin {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
     ]);
     _animController.dispose();
     super.dispose();
@@ -107,7 +106,7 @@ class TestState extends State<TestPage> with SingleTickerProviderStateMixin {
         shadowColor: Colors.black,
         backgroundColor: Colors.grey.shade900,
         leading: IconButton(
-          icon: const Icon(Icons.clear),
+          icon: const Icon(Icons.clear, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -221,6 +220,7 @@ class TestState extends State<TestPage> with SingleTickerProviderStateMixin {
                         scrollDirection: Axis.vertical,
                         enableInfiniteScroll: false,
                         enlargeCenterPage: true,
+                        scrollPhysics: const BouncingScrollPhysics(),
                         enlargeStrategy: CenterPageEnlargeStrategy.scale,
                         onPageChanged: (t, _) {
                           setState(() {
@@ -247,13 +247,19 @@ class TestState extends State<TestPage> with SingleTickerProviderStateMixin {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  ...List.generate(
-                                    _corct.length,
-                                    (index) => Text(
-                                      _collection.verses[_corct[index]]
-                                          .getShortName(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                  Expanded(
+                                    child: ListView(
+                                      children: [
+                                        ...List.generate(
+                                          _corct.length,
+                                              (index) => Text(
+                                            _collection.verses[_corct[index]]
+                                                .getShortName(),
+                                            style:
+                                            const TextStyle(color: Colors.white),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -275,13 +281,19 @@ class TestState extends State<TestPage> with SingleTickerProviderStateMixin {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  ...List.generate(
-                                    _wrong.length,
-                                    (index) => Text(
-                                      _collection.verses[_wrong[index]]
-                                          .getShortName(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                  Expanded(
+                                    child: ListView(
+                                      children: [
+                                        ...List.generate(
+                                          _wrong.length,
+                                              (index) => Text(
+                                            _collection.verses[_wrong[index]]
+                                                .getShortName(),
+                                            style:
+                                            const TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],

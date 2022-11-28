@@ -166,7 +166,6 @@ Card genCard(BuildContext context, VerseCollection collection) {
                         icon: const Icon(Icons.delete),
                         text: const Text("삭제"),
                         onPressed: () {
-                          deleteLocalCollection(collection);
                           state.remove(collection);
                         },
                       );

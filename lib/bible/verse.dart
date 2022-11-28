@@ -450,7 +450,30 @@ class MultiVerse {
   MultiVerse(this.verse);
 
   String getShortName() {
-    return "${verse[0].book.korAb} ${verse[0].chapter} : ${verse.getRange(0, (verse.length > 3) ? 3 : verse.length).map((e) => e.verse).join(",")}${(verse.length > 3) ? "..." : ""}";
+    int tmp = verse.first.verse;
+    int count = 0;
+    String v = "$tmp";
+
+    for(int i = 0; i<verse.length; i++){
+      if(tmp==verse[i].verse){
+        tmp++;
+        count++;
+      }else{
+        if(count==1){
+          v += ",";
+        }else{
+          v += "-${tmp-1},";
+        }
+        count = 1;
+        v += "${verse[i].verse}";
+        tmp = verse[i].verse+1;
+      }
+    }
+    if(count>1){
+      v += "-${tmp-1}";
+    }
+
+    return "${verse[0].book.korAb} ${verse[0].chapter} : $v";
   }
 
   Future<List<Map>> getAllVerses() async {

@@ -59,6 +59,12 @@ class VerseCardState extends State<VerseCardPage> {
             onPressed: () {
               Navigator.pushNamed(context, "/practice", arguments: _collect);
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.star),
+            onPressed: () {
+              Navigator.pushNamed(context, "/test", arguments: _collect);
+            },
           )
         ],
         leading: IconButton(
