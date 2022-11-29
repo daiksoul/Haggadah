@@ -78,6 +78,10 @@ enum Book{
   final String engAb;
   final bool newT;
   final int chapters;
+
+  static Book findByKor(String str){
+    return Book.values.where((element) => element.kor==str).first;
+  }
 }
 
 class BookNChap{
