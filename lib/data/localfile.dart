@@ -35,7 +35,7 @@ Future<List<VerseCollection>> readAllLocalCollection() async{
   final dir = Directory("$path/collections/");
   print(await dir.exists());
   if(!(await dir.exists())){
-    dir.create(recursive: true);
+    await dir.create(recursive: true);
   }
   final files = dir.listSync();
   List<VerseCollection> toReturn = [];

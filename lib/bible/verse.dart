@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/dat.dart';
 import 'package:haggah/data/localfile.dart';
+import 'package:haggah/data/resolve.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -221,7 +222,7 @@ class VerseState extends State<VersePage> {
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
-                                                state.remove(state.collection[index]);
+                                                state.remove(context,state.collection[index]);
                                               },
                                               child: const Text("삭제"),
                                             ),
@@ -253,7 +254,7 @@ class VerseState extends State<VersePage> {
                                           const Duration(milliseconds: 500),
                                     ),
                                   );
-                                  writeLocalCollection(state.collection[index]);
+                                  resolveWrite(context,state.collection[index]);
                                   Navigator.pop(context);
                                   setState(
                                     () {
@@ -297,8 +298,7 @@ class VerseState extends State<VersePage> {
                                             if (formKey.currentState!
                                                 .validate()) {
                                               Navigator.pop(context);
-                                              state.add(VerseCollection.empty(
-                                                  title: controller.text));
+                                              state.add(context,VerseCollection.empty(title: controller.text));
                                             }
                                           },
                                           child: const Text("생성"),

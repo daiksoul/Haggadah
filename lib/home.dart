@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
           Icons.person
         ),
         onPressed: (){
-
+          Navigator.pushNamed(context, "/login");
         },
       ),
     );

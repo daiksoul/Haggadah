@@ -1,9 +1,11 @@
 import 'dart:ffi';
+import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/localfile.dart';
+import 'package:haggah/data/resolve.dart';
 import 'package:provider/provider.dart';
 
 class StoragePage extends StatefulWidget {
@@ -62,11 +64,7 @@ class StorageState extends State<StoragePage> {
                           onPressed: () {
                             if(_formKey.currentState!.validate()){
                               Navigator.pop(context);
-                              state.add(
-                                  VerseCollection.empty(
-                                      title: _controller.text
-                                  )
-                              );
+                              state.add(context, VerseCollection.empty(title: _controller.text));
                             }
                           },
                           child: const Text("생성"),
@@ -166,7 +164,7 @@ Card genCard(BuildContext context, VerseCollection collection) {
                         icon: const Icon(Icons.delete),
                         text: const Text("삭제"),
                         onPressed: () {
-                          state.remove(collection);
+                          state.remove(context,collection);
                         },
                       );
                     },
@@ -203,22 +201,22 @@ class AppStorageState extends ChangeNotifier {
 
   List<VerseCollection> get collection => List.of(_collections);
 
-  void add(VerseCollection collection) {
+  void add(BuildContext context,VerseCollection collection) {
     _collections.add(collection);
-    writeLocalCollection(collection);
+    resolveWrite(context,collection);
     notifyListeners();
   }
 
-  void remove(VerseCollection collection) {
+  void remove(BuildContext context,VerseCollection collection) {
     _collections.removeWhere((element) => element.uid == collection.uid);
-    deleteLocalCollection(collection);
+    resolveDelete(context,collection);
     notifyListeners();
   }
 
-  void update(VerseCollection collection) {
+  void update(BuildContext context,VerseCollection collection) {
     _collections[_collections
         .indexWhere((element) => element.uid == collection.uid)] = collection;
-    writeLocalCollection(collection);
+    resolveWrite(context,collection);
     notifyListeners();
   }
 }

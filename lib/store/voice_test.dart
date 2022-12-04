@@ -139,7 +139,7 @@ class VocalTestState extends State<VocalTestPage> {
                             const SizedBox(height: 10,),
                             ...List.generate(_wron.length, (index){
                               return Text(
-                                '${_wron[index]}\n\n',
+                                '${_wron[index]}\n',
                               );
                             }),
                           ],

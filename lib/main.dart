@@ -1,15 +1,24 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/select.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/localfile.dart';
+import 'package:haggah/data/resolve.dart';
 import 'package:haggah/home.dart';
+import 'package:haggah/login.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:haggah/store/card_test.dart';
 import 'package:haggah/store/verse_card.dart';
 import 'package:haggah/store/voice_test.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
         providers: [
@@ -38,10 +47,10 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
       Duration.zero,
       (){
         Provider.of<AppSpeechTextState>(context,listen: false).init();
-        readAllLocalCollection().then(
+        resolveReadAll(context).then(
           (val){
             for(final collect in val){
-              Provider.of<AppStorageState>(context,listen: false).add(collect);
+              Provider.of<AppStorageState>(context,listen: false).add(context,collect);
             }
           }
         );
@@ -124,7 +133,8 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         "/collections": (BuildContext context) => const StoragePage(),
         "/card": (BuildContext context) => const VerseCardPage(),
         "/practice": (BuildContext context) => const CardTestPage(),
-        "/test": (BuildContext context) => const VocalTestPage()
+        "/test": (BuildContext context) => const VocalTestPage(),
+        "/login": (BuildContext context) => const LoginPage(),
       }
     );
   }
@@ -132,8 +142,13 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
 
 class ApplicationState extends ChangeNotifier{
   bool _isSignedIn = false;
+  bool get isSignedIn => _isSignedIn;
 
   void signIn(){
     _isSignedIn = true;
+  }
+
+  void signOut(){
+    _isSignedIn = false;
   }
 }
