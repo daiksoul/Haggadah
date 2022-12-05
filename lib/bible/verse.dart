@@ -274,10 +274,13 @@ class VerseState extends State<VersePage> {
                                     final controller = TextEditingController();
                                     final formKey = GlobalKey<FormState>();
                                     return AlertDialog(
-                                      title: const Text("보관함 이름"),
+                                      title: const Text("보관함 만들기"),
                                       content: Form(
                                         key: formKey,
                                         child: TextFormField(
+                                          decoration: const InputDecoration(
+                                            labelText: "보관함 이름"
+                                          ),
                                           controller: controller,
                                           validator: (val) {
                                             if (val == null || val.isEmpty) {

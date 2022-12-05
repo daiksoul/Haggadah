@@ -16,10 +16,6 @@ class HomePage extends StatelessWidget {
             "assets/logo.png",
             height: 200,
           ),
-          const Align(
-            alignment: Alignment.center,
-            child: Text("하가다"),
-          ),
           const SizedBox(height: 20,),
           Padding(
             padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),

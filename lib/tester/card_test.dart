@@ -116,9 +116,9 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
         builder: (context, constraints) {
           final size = MediaQuery.of(context).size;
           return GestureDetector(
-            onTap: () {
-              print("$_currentPage");
-            },
+            // onTap: () {
+            //   print("$_currentPage");
+            // },
             onPanDown: (detail) {
               if (_dragAlgin.x.abs() < 2) {
                 _animController.stop();

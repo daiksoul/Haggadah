@@ -33,7 +33,7 @@ Future<VerseCollection> readLocalCollection(String name) async{
 Future<List<VerseCollection>> readAllLocalCollection() async{
   final path = await _localPath;
   final dir = Directory("$path/collections/");
-  print(await dir.exists());
+  // print(await dir.exists());
   if(!(await dir.exists())){
     await dir.create(recursive: true);
   }

@@ -2,14 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/select.dart';
 import 'package:haggah/bible/verse.dart';
-import 'package:haggah/data/localfile.dart';
 import 'package:haggah/data/resolve.dart';
 import 'package:haggah/home.dart';
 import 'package:haggah/login.dart';
 import 'package:haggah/store/storage.dart';
-import 'package:haggah/store/card_test.dart';
+import 'package:haggah/tester/card_test.dart';
 import 'package:haggah/store/verse_card.dart';
-import 'package:haggah/store/voice_test.dart';
+import 'package:haggah/tester/voice_test.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -81,6 +80,10 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.green.shade200,
+          elevation: 1
+        ),
         primarySwatch: Colors.blue,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
@@ -135,7 +138,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         "/practice": (BuildContext context) => const CardTestPage(),
         "/test": (BuildContext context) => const VocalTestPage(),
         "/login": (BuildContext context) => const LoginPage(),
-      }
+      },
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:haggah/main.dart';
 import 'package:provider/provider.dart';
 
 Future<bool> resolveWrite(BuildContext context, VerseCollection collection)async{
-  final signedIn = Provider.of<ApplicationState>(context).isSignedIn;
+  final signedIn = Provider.of<ApplicationState>(context, listen: false).isSignedIn;
   if(signedIn){
     await writeRemoteCollection(collection);
   }
@@ -15,7 +15,7 @@ Future<bool> resolveWrite(BuildContext context, VerseCollection collection)async
 }
 
 Future<bool> resolveDelete(BuildContext context, VerseCollection collection)async{
-  final signedIn = Provider.of<ApplicationState>(context).isSignedIn;
+  final signedIn = Provider.of<ApplicationState>(context, listen: false).isSignedIn;
   if(signedIn){
     await deleteRemoteCollection(collection);
   }
@@ -24,7 +24,7 @@ Future<bool> resolveDelete(BuildContext context, VerseCollection collection)asyn
 }
 
 Future<List<VerseCollection>> resolveReadAll(BuildContext context)async{
-  final signedIn = Provider.of<ApplicationState>(context).isSignedIn;
+  final signedIn = Provider.of<ApplicationState>(context, listen: false).isSignedIn;
   if(signedIn){
     return readAllRemoteCollection();
   }else{
@@ -33,7 +33,7 @@ Future<List<VerseCollection>> resolveReadAll(BuildContext context)async{
 }
 
 Future<VerseCollection> resolveRead(BuildContext context, String name){
-  final signedIn = Provider.of<ApplicationState>(context).isSignedIn;
+  final signedIn = Provider.of<ApplicationState>(context, listen:  false).isSignedIn;
   if(signedIn){
     return readRemoteCollection(name);
   }else{
