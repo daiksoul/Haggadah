@@ -1,9 +1,10 @@
 import 'dart:ffi';
-import 'dart:js';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:haggah/bible/dat.dart';
+import 'package:flutter/services.dart';
 import 'package:haggah/bible/verse.dart';
+import 'package:haggah/data/firebase.dart';
 import 'package:haggah/data/localfile.dart';
 import 'package:haggah/data/resolve.dart';
 import 'package:provider/provider.dart';
@@ -30,68 +31,157 @@ class StorageState extends State<StoragePage> {
       ),
       floatingActionButton: Consumer<AppStorageState>(
         builder: (context, state, _){
-          return FloatingActionButton(
-            child: const Icon(
-                Icons.add
-            ),
-            onPressed: (){
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    final _controller = TextEditingController();
-                    final _formKey = GlobalKey<FormState>();
-                    return AlertDialog(
-                      title: const Text("보관함 이름"),
-                      content: Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          controller: _controller,
-                          validator: (val){
-                            if(val==null||val.isEmpty){
-                              return "이름을 입력해야 합니다.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () =>
-                              Navigator.pop(context),
-                          child: const Text("취소"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            if(_formKey.currentState!.validate()){
-                              Navigator.pop(context);
-                              state.add(context, VerseCollection.empty(title: _controller.text));
-                            }
-                          },
-                          child: const Text("생성"),
-                        ),
-                      ],
+          return Align(
+            alignment: Alignment.bottomRight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  heroTag: null,
+                  child: const Icon(
+                      Icons.add
+                  ),
+                  onPressed: (){
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          final _controller = TextEditingController();
+                          final _formKey = GlobalKey<FormState>();
+                          return AlertDialog(
+                            title: const Text("보관함 생성하기"),
+                            content: Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  labelText: "보관함 이름"
+                                ),
+                                controller: _controller,
+                                validator: (val){
+                                  if(val==null||val.isEmpty){
+                                    return "이름을 입력해야 합니다.";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context),
+                                child: const Text("취소"),
+                              ),
+                              Consumer<AppStorageState>(
+                                builder: (context,state,_){
+                                  return TextButton(
+                                    onPressed: () {
+                                      if(_formKey.currentState!.validate()){
+                                        Navigator.pop(context);
+                                        state.add(context, VerseCollection.empty(title: _controller.text));
+                                      }
+                                    },
+                                    child: const Text("생성"),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        }
                     );
-                  }
-              );
-            },
+                  },
+                ),
+                const SizedBox(height: 15,),
+                FloatingActionButton(
+                  child: const Icon(
+                      Icons.download
+                  ),
+                  onPressed: (){
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          final _controller = TextEditingController();
+                          final _formKey = GlobalKey<FormState>();
+                          return AlertDialog(
+                            title: const Text("보관함 가져오기"),
+                            content: Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  labelText: "공유 코드"
+                                ),
+                                controller: _controller,
+                                validator: (val){
+                                  if(val==null||val.isEmpty){
+                                    return "코드를 입력해야 합니다.";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context),
+                                child: const Text("취소"),
+                              ),
+                              Consumer<AppStorageState>(
+                                builder: (context,state,_){
+                                  return TextButton(
+                                    onPressed: () async{
+                                      if(_formKey.currentState!.validate()){
+                                        FirebaseFirestore.instance
+                                          .collection("share_collection")
+                                          .doc(_controller.text)
+                                          .snapshots()
+                                          .listen((event) {
+                                            if(event.exists){
+                                              final collection = VerseCollection.fromJson(event.data()!);
+                                              // print(collection.title);
+                                              state.add(context, collection);
+                                            }
+                                            else{
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                content: Text("일치하는 보관함을 찾지 못하였습니다."),
+                                                duration: Duration(milliseconds: 500),
+                                              ));
+                                            }
+                                            Navigator.pop(context);
+                                        });
+                                      }
+                                    },
+                                    child: const Text("가져오기"),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        }
+                    );
+                  },
+                )
+              ],
+            ),
           );
         },
       ),
-      body: Consumer<AppStorageState>(
-        builder: (context, state, _) {
-          return GridView(
-            padding: const EdgeInsets.all(5),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 300,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-            ),
-            children: [
-              ...List.generate(state.collection.length,
-                  (index) => genCard(context, state.collection[index]))
-            ],
-          );
-        },
+      body: Stack(
+        children: [
+          Consumer<AppStorageState>(
+            builder: (context, state, _) {
+              return GridView(
+                padding: const EdgeInsets.all(5),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 300,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                ),
+                children: [
+                  ...List.generate(state.collection.length,
+                          (index) => genCard(context, state.collection[index]))
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -151,7 +241,37 @@ Card genCard(BuildContext context, VerseCollection collection) {
                   labeledIconButton(
                     icon: const Icon(Icons.share),
                     text: const Text("공유"),
-                    onPressed: () {},
+                    onPressed: () async{
+                      final doc = await FirebaseFirestore.instance
+                          .collection("share_collection")
+                          .add(collection.toJson());
+                      showDialog(context: context, builder: (context)=>AlertDialog(
+                        title: const Text("공유하기"),
+                        content: SelectableText(doc.id),
+                        actions: [
+                          TextButton(
+                            child: const Text("복사"),
+                            onPressed: (){
+                              Clipboard.setData(
+                                ClipboardData(
+                                  text: doc.id
+                                )
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text("클립보드에 복사되었습니다."),
+                                duration: Duration(milliseconds: 500),
+                              ));
+                            },
+                          ),
+                          TextButton(
+                            child: const Text("확인"),
+                            onPressed: (){
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ));
+                    },
                   ),
                   // labeledIconButton(
                   //   icon: const Icon(Icons.edit),
@@ -202,9 +322,13 @@ class AppStorageState extends ChangeNotifier {
   List<VerseCollection> get collection => List.of(_collections);
 
   void add(BuildContext context,VerseCollection collection) {
-    _collections.add(collection);
-    resolveWrite(context,collection);
-    notifyListeners();
+    if(_collections.where((e) => e.uid==collection.uid).isNotEmpty){
+      update(context, collection);
+    }else {
+      _collections.add(collection);
+      resolveWrite(context, collection);
+      notifyListeners();
+    }
   }
 
   void remove(BuildContext context,VerseCollection collection) {
@@ -217,6 +341,17 @@ class AppStorageState extends ChangeNotifier {
     _collections[_collections
         .indexWhere((element) => element.uid == collection.uid)] = collection;
     resolveWrite(context,collection);
+    notifyListeners();
+  }
+
+  void update2(bool signedIn, VerseCollection collection){
+    _collections[_collections
+        .indexWhere((element) => element.uid == collection.uid)] = collection;
+    if(signedIn) {
+      writeRemoteCollection(collection);
+    } else {
+      writeLocalCollection(collection);
+    }
     notifyListeners();
   }
 }
