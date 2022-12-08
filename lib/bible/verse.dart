@@ -417,7 +417,7 @@ class VerseCollection {
       };
 
   VerseCollection.fromJson(Map<String, dynamic> json)
-      : uid = json['uid'] as String,
+      : uid = (json.containsKey("uid"))?json['uid'] as String:UniqueKey().toString(),
         title = json['title'] as String,
         verses = (json['verses'] as List)
             .map((e) => MultiVerse.fromJson(e))

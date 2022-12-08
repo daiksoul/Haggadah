@@ -242,9 +242,11 @@ Card genCard(BuildContext context, VerseCollection collection) {
                     icon: const Icon(Icons.share),
                     text: const Text("공유"),
                     onPressed: () async{
+                      final dat = collection.toJson();
+                      dat.remove("uid");
                       final doc = await FirebaseFirestore.instance
                           .collection("share_collection")
-                          .add(collection.toJson());
+                          .add(dat);
                       showDialog(context: context, builder: (context)=>AlertDialog(
                         title: const Text("공유하기"),
                         content: SelectableText(doc.id),
