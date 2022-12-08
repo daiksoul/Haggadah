@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/select.dart';
@@ -45,6 +46,11 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
     Future.delayed(
       Duration.zero,
       (){
+        if(FirebaseAuth.instance.currentUser!=null){
+          Provider.of<ApplicationState>(context,listen: false).signIn();
+        }else{
+          Provider.of<ApplicationState>(context,listen: false).signOut();
+        }
         Provider.of<AppSpeechTextState>(context,listen: false).init();
         resolveReadAll(context).then(
           (val){
