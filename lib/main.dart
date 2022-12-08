@@ -90,7 +90,11 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
           backgroundColor: Colors.green.shade200,
           elevation: 1
         ),
-        primarySwatch: Colors.blue,
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            textStyle: MaterialStateProperty.all(TextStyle(color: Colors.green.shade200))
+          )
+        ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
@@ -131,7 +135,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
               )
             )
           )
-        )
+        ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green).copyWith(secondary: Colors.green)
       ),
       initialRoute: "/",
       routes: {

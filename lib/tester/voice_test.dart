@@ -286,21 +286,23 @@ class VocalTestState extends State<VocalTestPage> {
                                                   "시험을 종료하시겠습니까?"),
                                               actions: [
                                                 TextButton(
-                                                  child: const Text("취소"),
+                                                  style: Theme.of(context).textButtonTheme.style,
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
+                                                  child: const Text("취소"),
                                                 ),
                                                 Consumer<AppSpeechTextState>(
                                                   builder: (context, state, _) {
                                                     return TextButton(
-                                                      child: const Text("확인"),
                                                       onPressed: () {
                                                         _listening = false;
                                                         state.stop();
                                                         Navigator.pop(context);
                                                         Navigator.pop(context);
                                                       },
+                                                      style: Theme.of(context).textButtonTheme.style,
+                                                      child: const Text("확인"),
                                                     );
                                                   },
                                                 ),

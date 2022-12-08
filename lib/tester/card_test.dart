@@ -37,9 +37,12 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
 
     Future.delayed(
       Duration.zero,
-      () {
+          () {
         _collection =
-            ModalRoute.of(context)!.settings.arguments as VerseCollection;
+        ModalRoute
+            .of(context)!
+            .settings
+            .arguments as VerseCollection;
         _list.clear();
         _waitng.clear();
         _corct.clear();
@@ -99,7 +102,10 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
-    _collection = ModalRoute.of(context)!.settings.arguments as VerseCollection;
+    _collection = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as VerseCollection;
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
       appBar: AppBar(
@@ -114,7 +120,9 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final size = MediaQuery.of(context).size;
+          final size = MediaQuery
+              .of(context)
+              .size;
           return GestureDetector(
             // onTap: () {
             //   print("$_currentPage");
@@ -150,159 +158,186 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
             },
             child: (_waitng.isNotEmpty)
                 ? CarouselSlider(
-                    items: [
-                      ...List.generate(
-                        _waitng.length,
-                        (index) => Align(
-                          alignment: (_currentPage == index)
-                              ? _dragAlgin
-                              : Alignment.center,
-                          // alignment: Alignment.center,
-                          child: Transform.rotate(
-                            angle: (_currentPage == index)
-                                ? _dragAlgin.x * (3.14) * 0.01
-                                : 0,
-                            // angle: 0,
-                            child: Card(
-                              color: (_currentPage == index)
-                                  ? ((_dragAlgin.x < -8)
-                                      ? Colors.red.shade200
-                                      : ((_dragAlgin.x > 8)
-                                          ? Colors.green.shade200
-                                          : Colors.white))
-                                  : Colors.white,
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        _collection.verses[_waitng[index]]
-                                            .getShortName(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                            fontSize: 20),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Expanded(
-                                        child: ListView(
-                                          children: [
-                                            for (Map map
-                                            in _list[_waitng[index]]) ...[
-                                              Text(
-                                                  "${map["ZVERSE_NUMBER"]} ${map["ZVERSE_CONTENT"]}"
-                                                      .trim(),
-                                                style: const TextStyle(
-                                                  fontSize: 15
+              items: [
+                ...List.generate(
+                  _waitng.length,
+                      (index) =>
+                      Align(
+                        alignment: (_currentPage == index)
+                            ? _dragAlgin
+                            : Alignment.center,
+                        // alignment: Alignment.center,
+                        child: Transform.rotate(
+                          angle: (_currentPage == index)
+                              ? _dragAlgin.x * (3.14) * 0.01
+                              : 0,
+                          // angle: 0,
+                          child: Card(
+                            color: (_currentPage == index)
+                                ? ((_dragAlgin.x < -8)
+                                ? Colors.red.shade200
+                                : ((_dragAlgin.x > 8)
+                                ? Colors.green.shade200
+                                : Colors.white))
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            child: AspectRatio(
+                              aspectRatio: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      _collection.verses[_waitng[index]]
+                                          .getShortName(),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                          fontSize: 20),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Expanded(
+                                      child: ListView(
+                                        children: [
+                                          for (Map map
+                                          in _list[_waitng[index]]) ...[
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment
+                                                  .start,
+                                              children: [
+                                                Text(
+                                                  "\t${map["ZVERSE_NUMBER"]} ",
+                                                  style: const TextStyle(
+                                                      fontSize: 15,
+                                                    fontWeight: FontWeight.bold
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 5,)
-                                            ]
-                                          ],
-                                        ),
+                                                Expanded(
+                                                  child: Text(
+                                                    (map["ZVERSE_CONTENT"] as String)
+                                                        .trim(),
+                                                    style: const TextStyle(fontSize: 15),
+                                                    // onSelectionChanged: (
+                                                    //     selection, reason) {
+                                                    //   final str = map["ZVERSE_CONTENT"] as String;
+                                                    //   print(str.substring(
+                                                    //       selection.start,
+                                                    //       selection.end));
+                                                    // },
+                                                    // toolbarOptions: ToolbarOptions(
+                                                    //
+                                                    // ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            const SizedBox(height: 5,)
+                                          ]
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                    options: CarouselOptions(
-                        height: constraints.maxHeight,
-                        viewportFraction: 0.5,
-                        scrollDirection: Axis.vertical,
-                        enableInfiniteScroll: false,
-                        enlargeCenterPage: true,
-                        scrollPhysics: const BouncingScrollPhysics(),
-                        enlargeStrategy: CenterPageEnlargeStrategy.scale,
-                        onPageChanged: (t, _) {
-                          setState(() {
-                            _currentPage = t;
-                          });
-                        },
-                    ),
-                  )
+                ),
+              ],
+              options: CarouselOptions(
+                height: constraints.maxHeight,
+                viewportFraction: 0.5,
+                scrollDirection: Axis.vertical,
+                enableInfiniteScroll: false,
+                enlargeCenterPage: true,
+                scrollPhysics: const BouncingScrollPhysics(),
+                enlargeStrategy: CenterPageEnlargeStrategy.scale,
+                onPageChanged: (t, _) {
+                  setState(() {
+                    _currentPage = t;
+                  });
+                },
+              ),
+            )
                 : (_corct.isNotEmpty || _wrong.isNotEmpty)
-                    ? Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "정답 ${_corct.length}개",
-                                    style: TextStyle(
-                                      color: Colors.green.shade300,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Expanded(
-                                    child: ListView(
-                                      children: [
-                                        ...List.generate(
-                                          _corct.length,
-                                              (index) => Text(
-                                            _collection.verses[_corct[index]]
-                                                .getShortName(),
-                                            style:
-                                            const TextStyle(color: Colors.white),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const VerticalDivider(
-                              color: Colors.white,
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "오답 ${_wrong.length}개",
-                                    style: TextStyle(
-                                      color: Colors.red.shade300,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Expanded(
-                                    child: ListView(
-                                      children: [
-                                        ...List.generate(
-                                          _wrong.length,
-                                              (index) => Text(
-                                            _collection.verses[_wrong[index]]
-                                                .getShortName(),
-                                            style:
-                                            const TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "정답 ${_corct.length}개",
+                          style: TextStyle(
+                            color: Colors.green.shade300,
+                            fontSize: 20,
+                          ),
                         ),
-                      )
-                    : const SizedBox(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              ...List.generate(
+                                _corct.length,
+                                    (index) =>
+                                    Text(
+                                      _collection.verses[_corct[index]]
+                                          .getShortName(),
+                                      style:
+                                      const TextStyle(color: Colors.white),
+                                    ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const VerticalDivider(
+                    color: Colors.white,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "오답 ${_wrong.length}개",
+                          style: TextStyle(
+                            color: Colors.red.shade300,
+                            fontSize: 20,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              ...List.generate(
+                                _wrong.length,
+                                    (index) =>
+                                    Text(
+                                      _collection.verses[_wrong[index]]
+                                          .getShortName(),
+                                      style:
+                                      const TextStyle(color: Colors.white),
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+                : const SizedBox(),
           );
         },
       ),

@@ -217,6 +217,7 @@ class VerseState extends State<VersePage> {
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(context),
+                                              style: Theme.of(context).textButtonTheme.style,
                                               child: const Text("취소"),
                                             ),
                                             TextButton(
@@ -224,6 +225,7 @@ class VerseState extends State<VersePage> {
                                                 Navigator.pop(context);
                                                 state.remove(context,state.collection[index]);
                                               },
+                                              style: Theme.of(context).textButtonTheme.style,
                                               child: const Text("삭제"),
                                             ),
                                           ],

@@ -160,6 +160,13 @@ class VerseCardState extends State<VerseCardPage> {
         ),
       ),
       body: ReorderableListView(
+        proxyDecorator: (child,index,animation){
+          return Material(
+            elevation: 0,
+            color: Colors.transparent,
+            child: child,
+          );
+        },
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
             if (oldIndex < newIndex) {
@@ -172,53 +179,58 @@ class VerseCardState extends State<VerseCardPage> {
         },
         children: [
           for (int i = 0; i < _verseList.length; i++)
-            ListTile(
-              tileColor: i.isOdd ? Colors.lightGreen.shade50 : Colors.white,
-              trailing: IconButton(
-                icon: const Icon(
-                  Icons.delete_outline,
-                ),
-                onPressed: () {
-                  setState(() {
-                    final removed = _collect.verses.removeAt(i);
-                    final removedId = i;
-                    final removedT = _verseList.removeAt(i);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
-                      action: SnackBarAction(
-                        label: "취소",
-                        onPressed: () {
-                          setState(() {
-                            _collect.verses.insert(removedId, removed);
-                            _verseList.insert(i, removedT);
-                          });
-                        },
-                      ),
-                    ));
-                  });
-                },
-              ),
+            Padding(
               key: Key('$i'),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _collect.verses[i].getShortName(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.green),
+              padding: const EdgeInsets.all(5),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                shape: RoundedRectangleBorder(side: BorderSide(color: Colors.lightGreen.shade200,width:0.5),borderRadius: const BorderRadius.all(Radius.circular(20))),
+                tileColor: i.isOdd ? Colors.lightGreen.shade50 : Colors.white,
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.delete_outline,
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  for (Map map in _verseList[i]) ...[
-                    Text("${map["ZVERSE_NUMBER"]} ${map["ZVERSE_CONTENT"]}"
-                        .trim()),
+                  onPressed: () {
+                    setState(() {
+                      final removed = _collect.verses.removeAt(i);
+                      final removedId = i;
+                      final removedT = _verseList.removeAt(i);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
+                        action: SnackBarAction(
+                          label: "취소",
+                          onPressed: () {
+                            setState(() {
+                              _collect.verses.insert(removedId, removed);
+                              _verseList.insert(i, removedT);
+                            });
+                          },
+                        ),
+                      ));
+                    });
+                  },
+                ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _collect.verses[i].getShortName(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
                     const SizedBox(
-                      height: 5,
-                    )
-                  ]
-                ],
+                      height: 10,
+                    ),
+                    for (Map map in _verseList[i]) ...[
+                      Text("${map["ZVERSE_NUMBER"]} ${map["ZVERSE_CONTENT"]}"
+                          .trim()),
+                      const SizedBox(
+                        height: 5,
+                      )
+                    ]
+                  ],
+                ),
               ),
             ),
         ],

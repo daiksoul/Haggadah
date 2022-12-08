@@ -68,6 +68,7 @@ class StorageState extends State<StoragePage> {
                               TextButton(
                                 onPressed: () =>
                                     Navigator.pop(context),
+                                style: Theme.of(context).textButtonTheme.style,
                                 child: const Text("취소"),
                               ),
                               Consumer<AppStorageState>(
@@ -79,6 +80,7 @@ class StorageState extends State<StoragePage> {
                                         state.add(context, VerseCollection.empty(title: _controller.text));
                                       }
                                     },
+                                    style: Theme.of(context).textButtonTheme.style,
                                     child: const Text("생성"),
                                   );
                                 },
@@ -252,6 +254,7 @@ Card genCard(BuildContext context, VerseCollection collection) {
                         content: SelectableText(doc.id),
                         actions: [
                           TextButton(
+                            style: Theme.of(context).textButtonTheme.style,
                             child: const Text("복사"),
                             onPressed: (){
                               Clipboard.setData(
