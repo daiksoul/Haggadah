@@ -103,47 +103,36 @@ class BookSelectPageState extends State<BookSelectPage> {
               items: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ListView(
-                    children: [
-                      for (final book
-                          in Book.values.where((element) => !element.newT)) ...[
-                        ListTile(
-                          title: Text(book.kor),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/chapters",
-                                arguments: book);
-                          },
-                        ),
-                        const Divider(
-                          thickness: 0.5,
-                          height: 0.5,
-                        )
-                      ]
-                    ],
+                  child: ListView.separated(
+                    itemCount: 39,
+                    itemBuilder: (context,index)=>ListTile(
+                      title: Text(Book.values[index].kor),
+                      onTap: () {
+                        Navigator.pushNamed(context, "/chapters",
+                            arguments: Book.values[index]);
+                      },
+                    ),
+                    separatorBuilder: (context,_)=>const Divider(
+                      thickness: 0.5,
+                      height: 0.5,
+                    ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ListView(
-                    children: [
-                      for (final book
-                          in Book.values.where((element) => element.newT)) ...[
-                        ListTile(
-                          title: Text(
-                            book.kor,
-                            textAlign: TextAlign.end,
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/chapters",
-                                arguments: book);
-                          },
-                        ),
-                        const Divider(
-                          thickness: 0.5,
-                          height: 0.5,
-                        )
-                      ],
-                    ],
+                  child: ListView.separated(
+                    itemCount: 27,
+                    itemBuilder: (context,index)=>ListTile(
+                      title: Text(Book.values[index+39].kor, textAlign: TextAlign.end,),
+                      onTap: () {
+                        Navigator.pushNamed(context, "/chapters",
+                            arguments: Book.values[index+39]);
+                      },
+                    ),
+                    separatorBuilder: (context,_)=>const Divider(
+                      thickness: 0.5,
+                      height: 0.5,
+                    ),
                   ),
                 )
               ],

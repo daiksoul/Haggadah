@@ -118,7 +118,7 @@ class VerseState extends State<VersePage> {
                 ? IconButton(
                     icon: const Icon(Icons.navigate_before),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         _animateRoute(
                             (bookNChap.chapter == 1)
@@ -134,6 +134,7 @@ class VerseState extends State<VersePage> {
                                 : BookNChap(
                                     bookNChap.book, bookNChap.chapter - 1),
                             true),
+
                       );
                     },
                   )
@@ -148,7 +149,7 @@ class VerseState extends State<VersePage> {
                 ? IconButton(
                     icon: const Icon(Icons.navigate_next),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           _animateRoute(
                               (bookNChap.chapter == bookNChap.book.chapters)
@@ -378,7 +379,7 @@ Route _animateRoute(Object? arg, bool forward) {
     transitionsBuilder: (context, animation, secondary, child) {
       final begin = Offset((forward) ? -1.0 : 1.0, 0);
       const end = Offset.zero;
-      const curve = Curves.ease;
+      const curve = Curves.linear;
 
       var tween = Tween(begin: begin, end: end);
       final curvedAnimation = CurvedAnimation(
