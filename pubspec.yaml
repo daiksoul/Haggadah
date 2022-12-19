@@ -31,12 +31,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   carousel_slider: ^4.1.1
+  flutter_speed_dial: ^6.2.0
+
   sqflite: ^2.2.0+3
   path: ^1.8.2
   provider: ^6.0.4
   path_provider: ^2.0.11
   speech_to_text: ^6.1.0
+
   firebase_core: ^2.3.0
   firebase_auth: ^4.1.4
   cloud_firestore: ^4.1.0

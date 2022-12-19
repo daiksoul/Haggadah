@@ -6,6 +6,7 @@ import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/resolve.dart';
 import 'package:haggah/home.dart';
 import 'package:haggah/login.dart';
+import 'package:haggah/setting/setting.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:haggah/tester/card_test.dart';
 import 'package:haggah/store/verse_card.dart';
@@ -25,6 +26,7 @@ void main() async{
           ChangeNotifierProvider(create: (context)=>ApplicationState()),
           ChangeNotifierProvider(create: (context)=>AppStorageState()),
           ChangeNotifierProvider(create: (context)=>AppSpeechTextState()),
+          ChangeNotifierProvider(create: (context)=>AppSettingState()),
         ],
         child: const MyApp(),
     )
@@ -148,6 +150,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         "/practice": (BuildContext context) => const CardTestPage(),
         "/test": (BuildContext context) => const VocalTestPage(),
         "/login": (BuildContext context) => const LoginPage(),
+        "/settings": (BuildContext context) => const SettingsPage(),
       },
     );
   }

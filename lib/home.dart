@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget{
   const HomePage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => HomeState();
+
+}
+
+class HomeState extends State<HomePage> {
+  final speedDialOpen = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +77,38 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(
-          Icons.person
-        ),
-        onPressed: (){
-          Navigator.pushNamed(context, "/login");
-        },
+      floatingActionButton: SpeedDial(
+        openCloseDial: speedDialOpen,
+        elevation: 1.0,
+        icon: Icons.menu,
+        children: [
+          SpeedDialChild(
+            elevation: 1.0,
+            label: '설정',
+            child: IconButton(
+              icon: const Icon(
+                Icons.settings
+              ),
+              onPressed: (){
+                speedDialOpen.value = false;
+                Navigator.pushNamed(context, '/settings');
+              },
+            )
+          ),
+          SpeedDialChild(
+            elevation: 1.0,
+            label: '프로필',
+            child: IconButton(
+              icon: const Icon(
+                Icons.person
+              ),
+              onPressed: (){
+                speedDialOpen.value = false;
+                Navigator.pushNamed(context, "/login");
+              },
+            )
+          )
+        ],
       ),
     );
   }
