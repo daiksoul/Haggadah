@@ -37,19 +37,35 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Consumer<ApplicationState>(builder: (context, state, _) {
                   return (state.isSignedIn)
-                      ? Image.network(
-                          FirebaseAuth.instance.currentUser!.photoURL ?? "wee")
+                      ? Container(
+                        width: 100,
+                        height: 100,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: ClipOval(
+                          child: Image.network(
+                            FirebaseAuth.instance.currentUser!.photoURL ?? "wee",
+                            fit: BoxFit.fill,
+                          ),
+                        )
+                      )
                       : const Icon(
                           Icons.person,
-                          size: 60,
+                          size: 100,
                         );
                 }),
                 const SizedBox(height: 16.0),
                 Consumer<ApplicationState>(
                   builder: (context, state, _) {
                     return (state.isSignedIn)
-                        ? Text(FirebaseAuth.instance.currentUser!.displayName ??
-                            "Nope")
+                        ? Text(
+                          FirebaseAuth.instance.currentUser!.displayName ?? "Nope",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        )
                         : const Text("로그인");
                   },
                 )
