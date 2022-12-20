@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget{
@@ -34,5 +33,10 @@ class AppSettingState extends ChangeNotifier{
     notifyListeners();
   }
 
-  
+  bool _expandVerse = false;
+
+  bool get expandVerse => _expandVerse;
+  set expandVerse(val){
+    _expandVerse = val;
+  }
 }
