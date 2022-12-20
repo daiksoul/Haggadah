@@ -453,6 +453,7 @@ class Verse {
 
 class MultiVerse {
   List<Verse> verse;
+  Map<String,List<int>> comment = {};
   MultiVerse(this.verse);
 
   String getShortName() {
@@ -491,11 +492,13 @@ class MultiVerse {
   }
 
   Map<String, dynamic> toJson() => {
-        'verses': verse.map((e) => e.toJson()).toList()
+        'verses': verse.map((e) => e.toJson()).toList(),
+        'comment': comment
       };
 
   MultiVerse.fromJson(Map<String, dynamic> json)
       : verse = (json["verses"] as List)
             .map((e) => Verse.fromJson(e))
-            .toList();
+            .toList(),
+        comment = Map<String,List<int>>.from(json['comment']??{});
 }
