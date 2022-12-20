@@ -31,7 +31,7 @@ class VerseCollection {
 
 class MultiVerse {
   List<Verse> verse;
-  Map<String,List<int>> comment = {};
+  List<Highlight> comment = [];
   MultiVerse(this.verse);
 
   String getShortName() {
@@ -71,14 +71,40 @@ class MultiVerse {
 
   Map<String, dynamic> toJson() => {
     'verses': verse.map((e) => e.toJson()).toList(),
-    'comment': comment
+    'comment': comment.map((e) => e.toJson()).toList()
   };
 
   MultiVerse.fromJson(Map<String, dynamic> json)
       : verse = (json["verses"] as List)
       .map((e) => Verse.fromJson(e))
       .toList(),
-        comment = Map<String,List<int>>.from(json['comment']??{});
+        comment = List<dynamic>.of(json['comment']??[]).map((e) => Highlight.fromJson(e)).toList(growable: true);
+
+  void highlight(String color, int start, int end, [bool remove = false]){
+    var addAfter = <Highlight>[];
+
+    for(var val in comment){
+      if(val.start<=start&&val.end>=end){
+        addAfter.add(Highlight(color: val.color, start: end, end: val.end));
+        val.end = start;
+      }else{
+        if(val.start<=start&&val.end>=start){
+          val.end = start;
+        }
+        if(val.start<=end&&val.end>=end){
+          val.start = end;
+        }
+      }
+    }
+    comment.removeWhere((val) => (start<=val.start&&end>=val.end));
+    comment.addAll(addAfter);
+
+    if(!remove) {
+      comment.add(Highlight(color: color, start: start, end: end));
+    }
+
+    comment.sort((a,b){return a.start - b.start;});
+  }
 }
 
 class Verse {
@@ -103,4 +129,32 @@ class Verse {
 
   Map<String, dynamic> toJson() =>
       {'book': book.index, 'chapter': chapter, 'verse': verse};
+}
+
+class Highlight{
+  String color;
+  int start;
+  int end;
+
+  Highlight({required this.color, required this.start, required this.end});
+
+  Highlight.fromJson(Map<String,dynamic> json)
+    : color = json['color'] as String,
+      start = json['s'] as int,
+      end = json['e'] as int;
+
+  Map<String,dynamic> toJson() =>
+      {'color': color, 's': start, 'e': end};
+}
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toLowerCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "ff$hexColor";
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

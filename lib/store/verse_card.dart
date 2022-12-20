@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/struct.dart';
-import 'package:haggah/bible/verse.dart';
 import 'package:haggah/main.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +20,14 @@ class VerseCardState extends State<VerseCardPage> {
   final List<List> _verseList = [];
 
   late List<bool> _expansion;
+
+  final List<String> _colors =[
+    'fbf719',
+    '2ba727',
+    '3aafdc',
+    'ea5a79',
+    '85569c',
+  ];
 
   @override
   void dispose() {
@@ -49,6 +56,46 @@ class VerseCardState extends State<VerseCardPage> {
         );
       }
     });
+  }
+
+  TextSpan _generateSpan(int index){
+    var mulVerse = _collect.verses[index];
+    var text = List.generate(_verseList[index].length, (index2) => _verseList[index][index2]["ZVERSE_CONTENT"].trim()).join(" ");
+
+    if(text.isEmpty) {
+      return const TextSpan();
+    }
+
+    var lst = <TextSpan>[];
+
+    int indexCut = 0;
+    for(var light in mulVerse.comment){
+      lst.addAll(
+        [
+          if(light.start>0)
+          TextSpan(
+            text: text.substring(indexCut,light.start)
+          ),
+          TextSpan(
+            text: text.substring(light.start,light.end),
+            style: TextStyle(
+              backgroundColor: HexColor(light.color),
+            )
+          ),
+        ]
+      );
+      if(light.end<=text.length) {
+        indexCut = light.end;
+      }
+    }
+
+    lst.add(TextSpan(text: text.substring(indexCut)));
+
+    var toRet = TextSpan(
+      children: lst
+    );
+
+    return toRet;
   }
 
   @override
@@ -274,12 +321,10 @@ class VerseCardState extends State<VerseCardPage> {
                         //   style: const TextStyle(fontSize: 15),
                         // ),
                         child: CustomSelectableText.rich(
-                          TextSpan(
-                            text: List.generate(_verseList[i].length, (index) => _verseList[i][index]["ZVERSE_CONTENT"].trim()).join(" "),
-                          ),
+                          _generateSpan(i),
                           key: PageStorageKey<String>('${_collect.verses[i].getShortName()}_1'),
                           textAlign: TextAlign.start,
-                          style: const TextStyle(fontSize: 15),
+                          style: const TextStyle(fontSize: 15, textBaseline: TextBaseline.ideographic, ),
                           items: [
                             CustomSelectableTextItem.icon(
                               icon: const Icon(Icons.select_all),
@@ -288,7 +333,50 @@ class VerseCardState extends State<VerseCardPage> {
                             CustomSelectableTextItem.icon(
                               icon: const Icon(Icons.format_underline),
                               onPressed: (text){
-                                _collect.verses[i].comment['123'] = [];
+                                String str = List.generate(_verseList[i].length, (index) => _verseList[i][index]["ZVERSE_CONTENT"].trim()).join(" ");
+                                var start = str.indexOf(text);
+                                var end = start+text.length;
+                                showDialog(
+                                  context: context,
+                                  builder: (context)=>AlertDialog(
+                                    title: const Text('색상 지정'),
+
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 80,
+                                      child: GridView.count(
+                                        crossAxisCount: 5,
+                                        children: [
+                                          for (var color in _colors)
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.circle,
+                                                size: 32,
+                                                color: HexColor('#$color'),
+                                              ),
+                                              onPressed: (){
+                                                Navigator.pop(context);
+                                                setState(()=>_collect.verses[i].highlight("#88$color", start, end));
+                                              },
+                                            )
+                                        ],
+                                      ),
+                                    )
+                                  )
+                                );
+                              }
+                            ),
+                            CustomSelectableTextItem.icon(
+                              icon: const Icon(
+                                Icons.format_clear
+                              ),
+                              onPressed: (text){
+                                String str = List.generate(_verseList[i].length, (index) => _verseList[i][index]["ZVERSE_CONTENT"].trim()).join(" ");
+                                var start = str.indexOf(text);
+                                var end = start+text.length;
+                                setState(() {
+                                  _collect.verses[i].highlight("#00ff00", start, end,true);
+                                });
                               }
                             )
                           ],
