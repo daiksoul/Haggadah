@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
+import 'package:haggah/bible/struct.dart';
 import 'package:haggah/bible/verse.dart';
 
 class CardTestPage extends StatefulWidget {

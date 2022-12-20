@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/dat.dart';
+import 'package:haggah/bible/struct.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';

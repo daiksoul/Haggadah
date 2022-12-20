@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haggah/bible/struct.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/main.dart';
 import 'package:haggah/store/storage.dart';

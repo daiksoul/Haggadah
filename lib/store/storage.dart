@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:haggah/bible/struct.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/firebase.dart';
 import 'package:haggah/data/localfile.dart';
