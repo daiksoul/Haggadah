@@ -3,6 +3,7 @@ import 'package:haggah/bible/verse.dart';
 import 'package:haggah/main.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:provider/provider.dart';
+import 'package:custom_selectable_text/custom_selectable_text.dart';
 
 class VerseCardPage extends StatefulWidget {
   const VerseCardPage({super.key});
@@ -17,6 +18,8 @@ class VerseCardState extends State<VerseCardPage> {
   late ApplicationState _app;
 
   final List<List> _verseList = [];
+
+  late List<bool> _expansion;
 
   @override
   void dispose() {
@@ -33,6 +36,7 @@ class VerseCardState extends State<VerseCardPage> {
       _stor = Provider.of<AppStorageState>(context, listen: false);
       _app = Provider.of<ApplicationState>(context, listen: false);
       _collect = ModalRoute.of(context)!.settings.arguments as VerseCollection;
+      _expansion = List.generate(_collect.verses.length, (index) => false);
       _verseList.clear();
       _verseList.addAll(List.generate(_collect.verses.length, (index) => []));
       for (int j = 0; j < _collect.verses.length; j++) {
@@ -61,7 +65,12 @@ class VerseCardState extends State<VerseCardPage> {
             hint: Padding(
               padding: const EdgeInsets.all(5),
               child: Column(
-                children: const [SizedBox(height: 10,),Icon(Icons.checklist)],
+                children: const [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(Icons.checklist)
+                ],
               ),
             ),
             items: [
@@ -96,6 +105,18 @@ class VerseCardState extends State<VerseCardPage> {
               } else {
                 Navigator.pushNamed(context, "/test", arguments: _collect);
               }
+            },
+          ),
+          IconButton(
+            icon: const Icon(
+                Icons.zoom_out_map
+            ),
+            onPressed: (){
+              setState(() {
+                for(int i = 0; i<_verseList.length; i++){
+                  _expansion[i] = true;
+                }
+              });
             },
           ),
           IconButton(
@@ -160,7 +181,7 @@ class VerseCardState extends State<VerseCardPage> {
         ),
       ),
       body: ReorderableListView(
-        proxyDecorator: (child,index,animation){
+        proxyDecorator: (child, index, animation) {
           return Material(
             elevation: 0,
             color: Colors.transparent,
@@ -180,58 +201,152 @@ class VerseCardState extends State<VerseCardPage> {
         children: [
           for (int i = 0; i < _verseList.length; i++)
             Padding(
-              key: Key('$i'),
+              key: PageStorageKey(_collect.verses[i].getShortName()),
               padding: const EdgeInsets.all(5),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                shape: RoundedRectangleBorder(side: BorderSide(color: Colors.lightGreen.shade200,width:0.5),borderRadius: const BorderRadius.all(Radius.circular(20))),
-                tileColor: i.isOdd ? Colors.lightGreen.shade50 : Colors.white,
-                trailing: IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      final removed = _collect.verses.removeAt(i);
-                      final removedId = i;
-                      final removedT = _verseList.removeAt(i);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                            "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
-                        action: SnackBarAction(
-                          label: "취소",
-                          onPressed: () {
-                            setState(() {
-                              _collect.verses.insert(removedId, removed);
-                              _verseList.insert(i, removedT);
-                            });
-                          },
-                        ),
-                      ));
-                    });
-                  },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: i.isOdd ? Colors.lightGreen.shade50 : Colors.white,
+                  shape: BoxShape.rectangle,
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  border:
+                      Border.all(color: Colors.lightGreen.shade200, width: 0.5),
                 ),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    // key: PageStorageKey<String>('${_collect.verses[i].getShortName()}_1'),
+                    initiallyExpanded: _expansion[i],
+                    maintainState: true,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    expandedAlignment: Alignment.centerLeft,
+                    leading: SizedBox(
+                      width: 30,
+                      height: 24,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          '${i + 1}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            // fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          final removed = _collect.verses.removeAt(i);
+                          final removedId = i;
+                          final removedT = _verseList.removeAt(i);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
+                            action: SnackBarAction(
+                              label: "취소",
+                              onPressed: () {
+                                setState(() {
+                                  _collect.verses.insert(removedId, removed);
+                                  _verseList.insert(i, removedT);
+                                });
+                              },
+                            ),
+                          ));
+                        });
+                      },
+                    ),
+                    title: Text(
                       _collect.verses[i].getShortName(),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.green),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    for (Map map in _verseList[i]) ...[
-                      Text("${map["ZVERSE_NUMBER"]} ${map["ZVERSE_CONTENT"]}"
-                          .trim()),
-                      const SizedBox(
-                        height: 5,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
+                        // child: Text(
+                        //   List.generate(_verseList[i].length, (index) => _verseList[i][index]["ZVERSE_CONTENT"].trim()).join(" "),
+                        //   textAlign: TextAlign.start,
+                        //   style: const TextStyle(fontSize: 15),
+                        // ),
+                        child: CustomSelectableText.rich(
+                          TextSpan(
+                            text: List.generate(_verseList[i].length, (index) => _verseList[i][index]["ZVERSE_CONTENT"].trim()).join(" "),
+                          ),
+                          key: PageStorageKey<String>('${_collect.verses[i].getShortName()}_1'),
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(fontSize: 15),
+                          items: [
+                            CustomSelectableTextItem.icon(
+                              icon: const Icon(Icons.select_all),
+                              controlType: SelectionControlType.selectAll,
+                            ),
+                            CustomSelectableTextItem.icon(
+                              icon: const Icon(Icons.format_underline),
+                              onPressed: (text){
+                                _collect.verses[i].comment['123'] = [];
+                              }
+                            )
+                          ],
+                        ),
                       )
-                    ]
-                  ],
+                    ],
+                  ),
                 ),
               ),
+              // ListTile(
+              //   contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+              //   shape: RoundedRectangleBorder(side: BorderSide(color: Colors.lightGreen.shade200,width:0.5),borderRadius: const BorderRadius.all(Radius.circular(20))),
+              //   tileColor: i.isOdd ? Colors.lightGreen.shade50 : Colors.white,
+              //   trailing: IconButton(
+              //     icon: const Icon(
+              //       Icons.delete_outline,
+              //     ),
+              //     onPressed: () {
+              //       setState(() {
+              //         final removed = _collect.verses.removeAt(i);
+              //         final removedId = i;
+              //         final removedT = _verseList.removeAt(i);
+              //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //           content: Text(
+              //               "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
+              //           action: SnackBarAction(
+              //             label: "취소",
+              //             onPressed: () {
+              //               setState(() {
+              //                 _collect.verses.insert(removedId, removed);
+              //                 _verseList.insert(i, removedT);
+              //               });
+              //             },
+              //           ),
+              //         ));
+              //       });
+              //     },
+              //   ),
+              //   title: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         _collect.verses[i].getShortName(),
+              //         style: const TextStyle(
+              //             fontWeight: FontWeight.bold, color: Colors.green),
+              //       ),
+              //       const SizedBox(
+              //         height: 10,
+              //       ),
+              //       for (Map map in _verseList[i]) ...[
+              //         Text("${map["ZVERSE_NUMBER"]} ${map["ZVERSE_CONTENT"]}"
+              //             .trim()),
+              //         const SizedBox(
+              //           height: 5,
+              //         )
+              //       ]
+              //     ],
+              //   ),
+              // ),
             ),
         ],
       ),
