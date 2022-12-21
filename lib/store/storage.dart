@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:haggah/bible/struct.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/firebase.dart';
@@ -32,137 +33,185 @@ class StorageState extends State<StoragePage> {
       ),
       floatingActionButton: Consumer<AppStorageState>(
         builder: (context, state, _){
-          return Align(
-            alignment: Alignment.bottomRight,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: null,
-                  child: const Icon(
-                      Icons.add
+          return SpeedDial(
+            elevation: 1,
+            icon: Icons.add,
+            children: [
+              SpeedDialChild(
+                elevation: 1,
+                labelWidget: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    // color: Colors.white,
+                      color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                      borderRadius: BorderRadius.circular(30)
                   ),
-                  onPressed: (){
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          final _controller = TextEditingController();
-                          final _formKey = GlobalKey<FormState>();
-                          return AlertDialog(
-                            title: const Text("보관함 생성하기"),
-                            content: Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: "보관함 이름"
-                                ),
-                                controller: _controller,
-                                validator: (val){
-                                  if(val==null||val.isEmpty){
-                                    return "이름을 입력해야 합니다.";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context),
-                                style: Theme.of(context).textButtonTheme.style,
-                                child: const Text("취소"),
-                              ),
-                              Consumer<AppStorageState>(
-                                builder: (context,state,_){
-                                  return TextButton(
-                                    onPressed: () {
-                                      if(_formKey.currentState!.validate()){
-                                        Navigator.pop(context);
-                                        state.add(context, VerseCollection.empty(title: _controller.text));
-                                      }
-                                    },
-                                    style: Theme.of(context).textButtonTheme.style,
-                                    child: const Text("생성"),
-                                  );
-                                },
-                              ),
-                            ],
-                          );
-                        }
-                    );
-                  },
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('새 보관함',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).floatingActionButtonTheme.focusColor
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).floatingActionButtonTheme.focusColor,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 15,),
-                FloatingActionButton(
-                  child: const Icon(
-                      Icons.download
-                  ),
-                  onPressed: (){
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          final _controller = TextEditingController();
-                          final _formKey = GlobalKey<FormState>();
-                          return AlertDialog(
-                            title: const Text("보관함 가져오기"),
-                            content: Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: "공유 코드"
-                                ),
-                                controller: _controller,
-                                validator: (val){
-                                  if(val==null||val.isEmpty){
-                                    return "코드를 입력해야 합니다.";
-                                  }
-                                  return null;
-                                },
+                onTap: (){
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        final _controller = TextEditingController();
+                        final _formKey = GlobalKey<FormState>();
+                        return AlertDialog(
+                          title: const Text("보관함 생성하기"),
+                          content: Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                  labelText: "보관함 이름"
                               ),
+                              controller: _controller,
+                              validator: (val){
+                                if(val==null||val.isEmpty){
+                                  return "이름을 입력해야 합니다.";
+                                }
+                                return null;
+                              },
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context),
-                                child: const Text("취소"),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context),
+                              style: Theme.of(context).textButtonTheme.style,
+                              child: const Text("취소"),
+                            ),
+                            Consumer<AppStorageState>(
+                              builder: (context,state,_){
+                                return TextButton(
+                                  onPressed: () {
+                                    if(_formKey.currentState!.validate()){
+                                      Navigator.pop(context);
+                                      state.add(context, VerseCollection.empty(title: _controller.text));
+                                    }
+                                  },
+                                  style: Theme.of(context).textButtonTheme.style,
+                                  child: const Text("생성"),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                  );
+                }
+              ),
+              SpeedDialChild(
+                elevation: 1,
+                labelWidget: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    // color: Colors.white,
+                    color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                    borderRadius: BorderRadius.circular(30)
+                  ),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('가져오기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).floatingActionButtonTheme.focusColor
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Icon(
+                          Icons.download,
+                          color: Theme.of(context).floatingActionButtonTheme.focusColor,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                onTap: (){
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        final _controller = TextEditingController();
+                        final _formKey = GlobalKey<FormState>();
+                        return AlertDialog(
+                          title: const Text("보관함 가져오기"),
+                          content: Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                  labelText: "공유 코드"
                               ),
-                              Consumer<AppStorageState>(
-                                builder: (context,state,_){
-                                  return TextButton(
-                                    onPressed: () async{
-                                      if(_formKey.currentState!.validate()){
-                                        FirebaseFirestore.instance
+                              controller: _controller,
+                              validator: (val){
+                                if(val==null||val.isEmpty){
+                                  return "코드를 입력해야 합니다.";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context),
+                              child: const Text("취소"),
+                            ),
+                            Consumer<AppStorageState>(
+                              builder: (context,state,_){
+                                return TextButton(
+                                  onPressed: () async{
+                                    if(_formKey.currentState!.validate()){
+                                      FirebaseFirestore.instance
                                           .collection("share_collection")
                                           .doc(_controller.text)
                                           .snapshots()
                                           .listen((event) {
-                                            if(event.exists){
-                                              final collection = VerseCollection.fromJson(event.data()!);
-                                              // print(collection.title);
-                                              state.add(context, collection);
-                                            }
-                                            else{
-                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                content: Text("일치하는 보관함을 찾지 못하였습니다."),
-                                                duration: Duration(milliseconds: 500),
-                                              ));
-                                            }
-                                            Navigator.pop(context);
-                                        });
-                                      }
-                                    },
-                                    child: const Text("가져오기"),
-                                  );
-                                },
-                              ),
-                            ],
-                          );
-                        }
-                    );
-                  },
-                )
-              ],
-            ),
+                                        if(event.exists){
+                                          final collection = VerseCollection.fromJson(event.data()!);
+                                          // print(collection.title);
+                                          state.add(context, collection);
+                                        }
+                                        else{
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text("일치하는 보관함을 찾지 못하였습니다."),
+                                            duration: Duration(milliseconds: 500),
+                                          ));
+                                        }
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                  },
+                                  child: const Text("가져오기"),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                  );
+                }
+              ),
+            ],
           );
         },
       ),

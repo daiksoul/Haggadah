@@ -91,6 +91,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         fontFamily: 'Nanum',
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Colors.green.shade200,
+          focusColor: Colors.white,
           elevation: 1
         ),
         textButtonTheme: TextButtonThemeData(

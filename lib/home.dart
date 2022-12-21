@@ -85,28 +85,73 @@ class HomeState extends State<HomePage> {
           SpeedDialChild(
             elevation: 1.0,
             label: '설정',
-            child: IconButton(
-              icon: const Icon(
-                Icons.settings
+            labelWidget: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                // color: Colors.white,
+                  color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                  borderRadius: BorderRadius.circular(30)
               ),
-              onPressed: (){
-                speedDialOpen.value = false;
-                Navigator.pushNamed(context, '/settings');
-              },
-            )
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('설정',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).floatingActionButtonTheme.focusColor
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Icon(
+                      Icons.settings,
+                      color: Theme.of(context).floatingActionButtonTheme.focusColor,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            onTap: (){
+              speedDialOpen.value = false;
+              Navigator.pushNamed(context, '/settings');
+            },
           ),
           SpeedDialChild(
             elevation: 1.0,
-            label: '프로필',
-            child: IconButton(
-              icon: const Icon(
-                Icons.person
+            labelWidget: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                // color: Colors.white,
+                  color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                  borderRadius: BorderRadius.circular(30)
               ),
-              onPressed: (){
-                speedDialOpen.value = false;
-                Navigator.pushNamed(context, "/login");
-              },
-            )
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('프로필',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).floatingActionButtonTheme.focusColor
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Icon(
+                      Icons.person,
+                      color: Theme.of(context).floatingActionButtonTheme.focusColor,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            onTap: (){
+              speedDialOpen.value = false;
+              Navigator.pushNamed(context, "/login");
+            }
           )
         ],
       ),
