@@ -135,7 +135,7 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
             },
             onPanUpdate: (detail) {
               setState(() {
-                _dragAlgin += Alignment(detail.delta.dx / 15, 0);
+                _dragAlgin += Alignment(detail.delta.dx / (size.width/20), 0);
               });
             },
             onPanEnd: (details) {
@@ -276,6 +276,7 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
                           style: TextStyle(
                             color: Colors.green.shade300,
                             fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(
@@ -311,6 +312,7 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
                           style: TextStyle(
                             color: Colors.red.shade300,
                             fontSize: 20,
+                            fontWeight: FontWeight.bold
                           ),
                         ),
                         const SizedBox(
