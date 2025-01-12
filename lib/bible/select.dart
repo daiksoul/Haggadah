@@ -11,11 +11,11 @@ class BookSelectPage extends StatefulWidget {
 
 class BookSelectPageState extends State<BookSelectPage> {
   var newTest = false;
-  final carouController = CarouselController();
-  Color selectColor(Set<MaterialState> states) {
-    if (states.contains(MaterialState.hovered)) {
+  final carouController = CarouselSliderController();
+  Color selectColor(Set<WidgetState> states) {
+    if (states.contains(WidgetState.hovered)) {
       return Colors.green.shade50;
-    } else if (states.contains(MaterialState.pressed)) {
+    } else if (states.contains(WidgetState.pressed)) {
       return Colors.green.shade100;
     } else {
       return Colors.white70;
@@ -50,12 +50,11 @@ class BookSelectPageState extends State<BookSelectPage> {
                     carouController.animateToPage(0);
                   },
                   style: ButtonStyle(
-                    side: MaterialStateProperty.all(BorderSide.none),
-                    minimumSize: MaterialStateProperty.all(
+                    side: WidgetStateProperty.all(BorderSide.none),
+                    minimumSize: WidgetStateProperty.all(
                       Size(MediaQuery.of(context).size.width / 2, 50),
                     ),
-                    overlayColor:
-                        MaterialStateProperty.resolveWith(selectColor),
+                    overlayColor: WidgetStateProperty.resolveWith(selectColor),
                   ),
                   child: const Text(
                     "구약",
@@ -67,12 +66,11 @@ class BookSelectPageState extends State<BookSelectPage> {
                     carouController.animateToPage(1);
                   },
                   style: ButtonStyle(
-                    side: MaterialStateProperty.all(BorderSide.none),
-                    minimumSize: MaterialStateProperty.all(
+                    side: WidgetStateProperty.all(BorderSide.none),
+                    minimumSize: WidgetStateProperty.all(
                       Size(MediaQuery.of(context).size.width / 2, 50),
                     ),
-                    overlayColor:
-                        MaterialStateProperty.resolveWith(selectColor),
+                    overlayColor: WidgetStateProperty.resolveWith(selectColor),
                   ),
                   child: const Text(
                     "신약",
@@ -105,14 +103,14 @@ class BookSelectPageState extends State<BookSelectPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView.separated(
                     itemCount: 39,
-                    itemBuilder: (context,index)=>ListTile(
+                    itemBuilder: (context, index) => ListTile(
                       title: Text(Book.values[index].kor),
                       onTap: () {
                         Navigator.pushNamed(context, "/chapters",
                             arguments: Book.values[index]);
                       },
                     ),
-                    separatorBuilder: (context,_)=>const Divider(
+                    separatorBuilder: (context, _) => const Divider(
                       thickness: 0.5,
                       height: 0.5,
                     ),
@@ -122,14 +120,17 @@ class BookSelectPageState extends State<BookSelectPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView.separated(
                     itemCount: 27,
-                    itemBuilder: (context,index)=>ListTile(
-                      title: Text(Book.values[index+39].kor, textAlign: TextAlign.end,),
+                    itemBuilder: (context, index) => ListTile(
+                      title: Text(
+                        Book.values[index + 39].kor,
+                        textAlign: TextAlign.end,
+                      ),
                       onTap: () {
                         Navigator.pushNamed(context, "/chapters",
-                            arguments: Book.values[index+39]);
+                            arguments: Book.values[index + 39]);
                       },
                     ),
-                    separatorBuilder: (context,_)=>const Divider(
+                    separatorBuilder: (context, _) => const Divider(
                       thickness: 0.5,
                       height: 0.5,
                     ),
@@ -165,7 +166,8 @@ class ChapterSelectState extends State<ChapterSelectPage> {
   late Book currBook;
   @override
   Widget build(BuildContext context) {
-    currBook = (ModalRoute.of(context)?.settings.arguments as Book) ?? Book.gen;
+    currBook =
+        (ModalRoute.of(context)?.settings.arguments as Book?) ?? Book.gen;
     return Scaffold(
       appBar: AppBar(
         title: Text(currBook.kor),
@@ -179,23 +181,47 @@ class ChapterSelectState extends State<ChapterSelectPage> {
       body: GridView(
         padding: const EdgeInsets.all(5),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 80, mainAxisSpacing: 5, crossAxisSpacing: 5),
-        // crossAxisCount: 6,
+          maxCrossAxisExtent: 80,
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 5,
+        ),
         children: [
           for (var t = 1; t <= currBook.chapters; t++)
             ElevatedButton(
               style: ButtonStyle(
-                  shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)))),
-                  shadowColor: MaterialStateProperty.all(Colors.transparent)),
+                side: WidgetStateProperty.all(
+                    BorderSide(color: Colors.green.shade500, width: 0.5)),
+                shape: WidgetStateProperty.all(
+                  const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                ),
+                elevation: const WidgetStatePropertyAll(0),
+                backgroundColor: t.isOdd
+                    ? Theme.of(context)
+                        .elevatedButtonTheme
+                        .style
+                        ?.backgroundColor
+                    : const WidgetStatePropertyAll(Colors.white),
+                foregroundColor: t.isOdd
+                    ? Theme.of(context)
+                        .elevatedButtonTheme
+                        .style
+                        ?.foregroundColor
+                    : WidgetStatePropertyAll(Colors.green.shade200),
+              ),
               onPressed: () {
-                Navigator.pushNamed(context, "/verses",
-                    arguments: BookNChap(currBook, t));
+                Navigator.pushNamed(
+                  context,
+                  "/verses",
+                  arguments: BookNChap(currBook, t),
+                );
               },
               child: Text(
                 t.toString(),
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: (t.toString().length > 2) ? 16 : 20),
               ),
             ),
         ],

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haggah/bible/struct.dart';
-import 'package:haggah/bible/verse.dart';
 
 Future<void> writeRemoteCollection(VerseCollection collection) async {
   await getCollectionRef().doc(collection.uid).set(collection.toJson());

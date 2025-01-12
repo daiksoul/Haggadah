@@ -15,25 +15,23 @@ import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-    MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context)=>ApplicationState()),
-          ChangeNotifierProvider(create: (context)=>AppStorageState()),
-          ChangeNotifierProvider(create: (context)=>AppSpeechTextState()),
-          ChangeNotifierProvider(create: (context)=>AppSettingState()),
-        ],
-        child: const MyApp(),
-    )
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => ApplicationState()),
+      ChangeNotifierProvider(create: (context) => AppStorageState()),
+      ChangeNotifierProvider(create: (context) => AppSpeechTextState()),
+      ChangeNotifierProvider(create: (context) => AppSettingState()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
-class MyApp extends StatefulWidget{
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
@@ -42,32 +40,31 @@ class MyApp extends StatefulWidget{
 
 class MyState extends State<MyApp> with WidgetsBindingObserver {
   @override
-  void initState(){
+  void initState() {
     super.initState();
     // WidgetsBinding.instance.addObserver(this);
     Future.delayed(
       Duration.zero,
-      (){
-        if(FirebaseAuth.instance.currentUser!=null){
-          Provider.of<ApplicationState>(context,listen: false).signIn();
-        }else{
-          Provider.of<ApplicationState>(context,listen: false).signOut();
+      () {
+        if (FirebaseAuth.instance.currentUser != null) {
+          Provider.of<ApplicationState>(context, listen: false).signIn();
+        } else {
+          Provider.of<ApplicationState>(context, listen: false).signOut();
         }
-        Provider.of<AppSpeechTextState>(context,listen: false).init();
-        resolveReadAll(context).then(
-          (val){
-            for(final collect in val){
-              Provider.of<AppStorageState>(context,listen: false).add(context,collect);
-            }
+        Provider.of<AppSpeechTextState>(context, listen: false).init();
+        resolveReadAll(context).then((val) {
+          for (final collect in val) {
+            Provider.of<AppStorageState>(context, listen: false)
+                .add(context, collect);
           }
-        );
+        });
       },
     );
   }
 
   @override
-  void dispose(){
-    Provider.of<AppSpeechTextState>(context,listen: false).stop();
+  void dispose() {
+    Provider.of<AppSpeechTextState>(context, listen: false).stop();
     super.dispose();
     // WidgetsBinding.instance.removeObserver(this);
   }
@@ -77,70 +74,56 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Haggadah',
-      scrollBehavior: const MaterialScrollBehavior().copyWith(scrollbars: false),
+      scrollBehavior:
+          const MaterialScrollBehavior().copyWith(scrollbars: false),
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        fontFamily: 'Nanum',
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: Colors.green.shade200,
-          focusColor: Colors.white,
-          elevation: 1
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(TextStyle(color: Colors.green.shade200))
-          )
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          shadowColor: Colors.transparent,
-          iconTheme: IconThemeData(
-            color: Colors.black,
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          fontFamily: 'Nanum',
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: Colors.green.shade200,
+              focusColor: Colors.white,
+              elevation: 1),
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(
+                      TextStyle(color: Colors.green.shade200)))),
+          appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              iconTheme: IconThemeData(
+                color: Colors.black,
+              ),
+              titleTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20)),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Colors.white,
+            unselectedIconTheme: IconThemeData(color: Colors.black, size: 24),
           ),
-          titleTextStyle: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20
-          )
-        ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
-          unselectedIconTheme: IconThemeData(
-            color: Colors.black,
-            size: 24
+          buttonTheme: ButtonThemeData(
+            buttonColor: Colors.green.shade100,
           ),
-        ),
-        buttonTheme: ButtonThemeData(
-          buttonColor: Colors.green.shade100,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(
-              const TextStyle(
-                color: Colors.black
-              )
-            ),
-            backgroundColor: MaterialStateProperty.all(Colors.green.shade100),
-          )
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(
-              const TextStyle(
-                color: Colors.green
-              )
-            )
-          )
-        ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green).copyWith(secondary: Colors.green)
-      ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+            textStyle:
+                const WidgetStatePropertyAll(TextStyle(color: Colors.black)),
+            backgroundColor: WidgetStatePropertyAll(Colors.green.shade100),
+          )),
+          outlinedButtonTheme: const OutlinedButtonThemeData(
+              style: ButtonStyle(
+                  textStyle:
+                      WidgetStatePropertyAll(TextStyle(color: Colors.green)))),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)
+              .copyWith(secondary: Colors.green)),
       initialRoute: "/",
       routes: {
         "/": (BuildContext context) => const HomePage(),
@@ -158,15 +141,15 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
   }
 }
 
-class ApplicationState extends ChangeNotifier{
+class ApplicationState extends ChangeNotifier {
   bool _isSignedIn = false;
   bool get isSignedIn => _isSignedIn;
 
-  void signIn(){
+  void signIn() {
     _isSignedIn = true;
   }
 
-  void signOut(){
+  void signOut() {
     _isSignedIn = false;
   }
 }

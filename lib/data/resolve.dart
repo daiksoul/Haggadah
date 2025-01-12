@@ -1,6 +1,11 @@
+/// Resolves data manipulation
+///
+/// If User is signed in, methods uses firebase methods</br>
+/// Else, methods uses localfile methods
+library resolve;
+
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/struct.dart';
-import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/firebase.dart';
 import 'package:haggah/data/localfile.dart';
 import 'package:haggah/main.dart';

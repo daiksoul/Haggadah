@@ -38,18 +38,18 @@ class _LoginPageState extends State<LoginPage> {
                 Consumer<ApplicationState>(builder: (context, state, _) {
                   return (state.isSignedIn)
                       ? Container(
-                        width: 100,
-                        height: 100,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: ClipOval(
-                          child: Image.network(
-                            FirebaseAuth.instance.currentUser!.photoURL ?? "wee",
-                            fit: BoxFit.fill,
+                          width: 100,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
                           ),
-                        )
-                      )
+                          child: ClipOval(
+                            child: Image.network(
+                              FirebaseAuth.instance.currentUser!.photoURL ??
+                                  "wee",
+                              fit: BoxFit.fill,
+                            ),
+                          ))
                       : const Icon(
                           Icons.person,
                           size: 100,
@@ -60,12 +60,13 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context, state, _) {
                     return (state.isSignedIn)
                         ? Text(
-                          FirebaseAuth.instance.currentUser!.displayName ?? "Nope",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        )
+                            FirebaseAuth.instance.currentUser!.displayName ??
+                                "Nope",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          )
                         : const Text("로그인");
                   },
                 )
@@ -77,10 +78,11 @@ class _LoginPageState extends State<LoginPage> {
                   ? IconLoginButton(
                       style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.green.shade200),
-                          minimumSize: MaterialStateProperty.all(
-                              const Size.fromHeight(50)),
-                          padding: MaterialStateProperty.all(EdgeInsets.zero)),
+                              WidgetStatePropertyAll(Colors.green.shade200),
+                          minimumSize:
+                              const WidgetStatePropertyAll(Size.fromHeight(50)),
+                          padding:
+                              const WidgetStatePropertyAll(EdgeInsets.zero)),
                       text: "GOOGLE",
                       icon: const Icon(
                         Icons.g_mobiledata_rounded,
@@ -124,10 +126,10 @@ class _LoginPageState extends State<LoginPage> {
                   : IconLoginButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.red.shade200),
-                        minimumSize: MaterialStateProperty.all(
-                            const Size.fromHeight(50)),
-                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                            WidgetStatePropertyAll(Colors.red.shade200),
+                        minimumSize:
+                            const WidgetStatePropertyAll(Size.fromHeight(50)),
+                        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
                       ),
                       text: "LOGOUT",
                       icon: const Icon(

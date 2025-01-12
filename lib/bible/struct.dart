@@ -3,24 +3,34 @@ import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:sqflite/sqflite.dart';
 
+/// Collection of [MultiVerse]
+///
+/// Collection of multiple [MultiVerse]s</br>
+/// Users create VerseCollection when creating collection
 class VerseCollection {
+  /// List of [MultiVerse]
   List<MultiVerse> verses;
+  /// Title of the Collection
   String title;
+  /// Unique id of the collection
   final String uid;
 
+  /// Creates an empty Verse Collection
   VerseCollection.empty({required this.title})
       : verses = [],
         uid = UniqueKey().toString();
-
+  /// Creates a Collection with verses initialized
   VerseCollection({required this.title, required this.verses})
       : uid = UniqueKey().toString();
 
+  /// Exports to JSON
   Map<String, dynamic> toJson() => {
     'uid': uid,
     'title': title,
     'verses': verses.map((e) => e.toJson()).toList(),
   };
 
+  /// Imports from JSON
   VerseCollection.fromJson(Map<String, dynamic> json)
       : uid = (json.containsKey("uid"))?json['uid'] as String:UniqueKey().toString(),
         title = json['title'] as String,
@@ -29,11 +39,22 @@ class VerseCollection {
             .toList();
 }
 
+/// Collection of individual [Verse]s
+///
+/// Contains individual [Verse]s</br>
+/// and list of [Highlight]s
 class MultiVerse {
+  /// List of [Verse]s
   List<Verse> verse;
+  /// List of [Highlight]s
   List<Highlight> comment = [];
+  /// Constructor with verses list
   MultiVerse(this.verse);
 
+  /// Returns a short name
+  ///
+  /// ex) 창세기 1장 1절, 창세기 1장 2절, 창세기 1장 3절 -> 창세기 1장 1-3절</br>
+  /// 호세아 6장 3절, 호세아 6장 6절 -> 호세아 6장 3,6절
   String getShortName() {
     int tmp = verse.first.verse;
     int count = 0;
@@ -61,6 +82,9 @@ class MultiVerse {
     return "${verse[0].book.korAb} ${verse[0].chapter} : $v";
   }
 
+  /// Returns a List of Map containing each [Verse] contents
+  ///
+  /// Calls [Verse.getVerse]
   Future<List<Map>> getAllVerses() async {
     List<Map> toReturn = [];
     for (final v in verse) {
@@ -69,17 +93,28 @@ class MultiVerse {
     return toReturn;
   }
 
+  /// Export to JSON
   Map<String, dynamic> toJson() => {
     'verses': verse.map((e) => e.toJson()).toList(),
     'comment': comment.map((e) => e.toJson()).toList()
   };
 
+  /// Import from JSON
   MultiVerse.fromJson(Map<String, dynamic> json)
       : verse = (json["verses"] as List)
       .map((e) => Verse.fromJson(e))
       .toList(),
         comment = List<dynamic>.of(json['comment']??[]).map((e) => Highlight.fromJson(e)).toList(growable: true);
 
+  /// Add or Remove Highlights on Verses
+  ///
+  /// If [remove] is set to true, then It will remove the highlight from the selected range
+  /// </br>
+  /// </br>
+  /// Adding a new highlight right next to an existing highlight
+  /// with the same color will merge them together</br>
+  /// Adding a new highlight on top of an existing highlight
+  /// will override the existing highlight
   void highlight(String color, int start, int end, [bool remove = false]){
     var addAfter = <Highlight>[];
 
@@ -107,13 +142,21 @@ class MultiVerse {
   }
 }
 
+/// Info of a verse
+///
+/// Contains only the essential data
 class Verse {
+  /// The book where the verse is from
   Book book;
+  /// The chapter where the verse is from
   int chapter;
+  /// The verse number
   int verse;
 
+  /// All fields are required to construct this object
   Verse({required this.book, required this.chapter, required this.verse});
 
+  /// Get query result from the DB corresponding to this verse
   Future<Map> getVerse() async {
     Database db = await getDB();
     return (await db.rawQuery(
@@ -122,31 +165,46 @@ class Verse {
         .toList()[0];
   }
 
+  /// Import from JSON
   Verse.fromJson(Map<String, dynamic> json)
       : book = Book.values[json['book'] as int],
         chapter = json['chapter'] as int,
         verse = json['verse'] as int;
 
+  /// Export to JSON
   Map<String, dynamic> toJson() =>
       {'book': book.index, 'chapter': chapter, 'verse': verse};
 }
 
+/// Highlight object
+///
+/// the [start] field and the [end] field are from
+/// the index of [MultiVerse] rather than each individual [Verse]s
 class Highlight{
+  /// Color of the Highlight
   String color;
+  /// Where the highlight begins
   int start;
+  /// where the highlight ends
   int end;
 
   Highlight({required this.color, required this.start, required this.end});
 
+  /// Import from JSON
   Highlight.fromJson(Map<String,dynamic> json)
     : color = json['color'] as String,
       start = json['s'] as int,
       end = json['e'] as int;
 
+  /// Export to JSON
   Map<String,dynamic> toJson() =>
       {'color': color, 's': start, 'e': end};
 }
 
+/// To create Color object from Hexcode
+///
+/// probably useless
+@Deprecated("Hexcodes can already be used from Color objects")
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toLowerCase().replaceAll("#", "");

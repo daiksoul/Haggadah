@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/struct.dart';
-import 'package:haggah/bible/verse.dart';
 
 class CardTestPage extends StatefulWidget {
   const CardTestPage({super.key});
@@ -22,7 +21,7 @@ class CardTestState extends State<CardTestPage> with SingleTickerProviderStateMi
   final List<int> _wrong = [];
   final List<int> _waitng = [];
   late VerseCollection _collection;
-  final _carControl = CarouselController();
+  final _carControl = CarouselSliderController();
 
   @override
   void initState() {
