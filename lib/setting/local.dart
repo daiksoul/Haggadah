@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:haggah/setting/setting.dart';
 import 'package:haggah/setting/settings_model.dart';
 import 'package:path_provider/path_provider.dart';
 

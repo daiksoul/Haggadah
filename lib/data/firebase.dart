@@ -15,7 +15,7 @@ Future<void> deleteRemoteCollection(VerseCollection collection) async {
 Future<VerseCollection> readRemoteCollection(String name) async {
   late Map<String, dynamic> map;
   await getCollectionRef().doc(name).snapshots().listen((event) {
-    map = Map.of(event.data() as Map<String, dynamic> ?? {});
+    map = Map.of(event.data() as Map<String, dynamic>? ?? {});
   });
   return VerseCollection.fromJson(map);
 }

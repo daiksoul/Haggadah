@@ -111,8 +111,6 @@ class VerseCardState extends State<VerseCardPage> {
     _collect = ModalRoute.of(context)!.settings.arguments as VerseCollection;
     final isLightMode = Theme.of(context).brightness == Brightness.light;
     print("${Theme.of(context).brightness}");
-    final borderColor =
-        isLightMode ? Colors.lightGreen.shade200 : const Color(0xFF0D2B03);
     return Scaffold(
       appBar: AppBar(
         title: Text(_collect.title),
