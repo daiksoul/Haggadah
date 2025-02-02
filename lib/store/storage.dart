@@ -7,6 +7,7 @@ import 'package:haggah/data/firebase.dart';
 import 'package:haggah/data/localfile.dart';
 import 'package:haggah/data/resolve.dart';
 import 'package:haggah/util/button_widgets.dart';
+import 'package:haggah/util/theme.dart';
 import 'package:provider/provider.dart';
 
 class StoragePage extends StatefulWidget {
@@ -176,8 +177,14 @@ class StorageState extends State<StoragePage> {
                   crossAxisSpacing: 5,
                 ),
                 children: [
-                  ...List.generate(state.collection.length,
-                      (index) => genCard(context, state.collection[index]))
+                  ...List.generate(
+                    state.collection.length,
+                    (index) => genCard(
+                      context,
+                      state.collection[index],
+                      index.isOdd,
+                    ),
+                  )
                 ],
               );
             },
@@ -188,13 +195,14 @@ class StorageState extends State<StoragePage> {
   }
 }
 
-Widget genCard(BuildContext context, VerseCollection collection) {
+Widget genCard(BuildContext context, VerseCollection collection, bool od) {
+  final isLightMode = Theme.of(context).brightness == Brightness.light;
   return InkWell(
     onTap: () {
       Navigator.pushNamed(context, "/card", arguments: collection);
     },
     child: Card(
-      color: Theme.of(context).cardColor,
+      color: (isLightMode ? odEvColor : dOdEvColor)[od ? 100 : 200],
       shadowColor: Colors.transparent,
       child: AspectRatio(
         aspectRatio: 3 / 4,
@@ -212,9 +220,10 @@ Widget genCard(BuildContext context, VerseCollection collection) {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 18),
                     ),
-                    const Divider(
+                    Divider(
                       height: 10,
                       thickness: 1,
+                      color: isLightMode ? odEvColor[300] : dOdEvColor[300],
                     ),
                     const SizedBox(
                       height: 5,

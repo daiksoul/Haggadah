@@ -6,7 +6,7 @@ ThemeData theme = ThemeData(
   fontFamily: 'Nanum',
   scaffoldBackgroundColor: Colors.white,
   canvasColor: Colors.white,
-  cardColor: Colors.white,
+  cardColor: odEvColor[100],
   dialogBackgroundColor: Colors.white,
   primaryColor: mainColor,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -17,6 +17,12 @@ ThemeData theme = ThemeData(
     elevation: 1,
   ),
   textTheme: lightTextTheme,
+  cardTheme: CardTheme(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+      side: BorderSide(color: odEvColor[300]!),
+    ),
+  ),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.white,
   ),
@@ -84,7 +90,7 @@ ThemeData darkTheme = ThemeData(
   fontFamily: 'Nanum',
   scaffoldBackgroundColor: Colors.black,
   canvasColor: Colors.black,
-  cardColor: Colors.black,
+  cardColor: dOdEvColor[100],
   dialogBackgroundColor: Colors.black,
   primaryColor: dMainColor,
   primaryTextTheme: darkTextTheme,
@@ -95,6 +101,12 @@ ThemeData darkTheme = ThemeData(
     foregroundColor: Colors.black,
     focusColor: Colors.black,
     elevation: 1,
+  ),
+  cardTheme: CardTheme(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+      side: BorderSide(color: dOdEvColor[300]!),
+    ),
   ),
   dialogTheme: DialogTheme(),
   inputDecorationTheme: InputDecorationTheme(

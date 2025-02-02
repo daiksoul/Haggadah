@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:haggah/main.dart';
+import 'package:haggah/setting/settings_model.dart';
+import 'package:haggah/util/theme.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -11,6 +13,7 @@ class SettingsPage extends StatefulWidget {
 class SettingsState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
     return Scaffold(
       appBar: AppBar(
         title: const Text("설정"),
@@ -21,82 +24,139 @@ class SettingsState extends State<SettingsPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ListView(
-          children: [
-            Row(
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('테마'),
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Text('시스템'),
-                        Radio<ThemeMode>(
-                          groupValue: MyApp.of(context).myThemeMode,
-                          value: ThemeMode.system,
-                          onChanged: (v) {
-                            setState(() {
-                              MyApp.of(context).changeTheme(v);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text('아침'),
-                        Radio<ThemeMode>(
-                          groupValue: MyApp.of(context).myThemeMode,
-                          value: ThemeMode.light,
-                          onChanged: (v) {
-                            setState(() {
-                              MyApp.of(context).changeTheme(v);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text('저녁'),
-                        Radio<ThemeMode>(
-                          groupValue: MyApp.of(context).myThemeMode,
-                          value: ThemeMode.dark,
-                          onChanged: (v) {
-                            setState(() {
-                              MyApp.of(context).changeTheme(v);
-                            });
-                          },
-                        ),
-                      ],
-                    )
-                  ],
+                const Text('테마'),
+                Consumer<AppSettingState>(
+                  builder: (_, setting, __) => Row(
+                    children: [
+                      Column(
+                        children: [
+                          const Text('시스템'),
+                          Radio<ThemeMode>(
+                            groupValue: setting.themeMode,
+                            value: ThemeMode.system,
+                            onChanged: (v) {
+                              setting.themeMode = v ?? setting.themeMode;
+                            },
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text('아침'),
+                          Radio<ThemeMode>(
+                            groupValue: setting.themeMode,
+                            value: ThemeMode.light,
+                            onChanged: (v) {
+                              setting.themeMode = v ?? setting.themeMode;
+                            },
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text('저녁'),
+                          Radio<ThemeMode>(
+                            groupValue: setting.themeMode,
+                            value: ThemeMode.dark,
+                            onChanged: (v) {
+                              setting.themeMode = v ?? setting.themeMode;
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 )
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text('미리보기'),
+          ),
+          const SizedBox(height: 10),
+          Transform.scale(
+            alignment: Alignment.topCenter,
+            scale: 0.75,
+            child: Column(
+              children: [
+                previewVerse(isLightMode, 0, '창 1 : 1', '태초에 하나님이 천지를 창조하시니라'),
+                previewVerse(
+                    isLightMode, 1, '시 23 : 1', '여호와는 나의 목자시니 내게 부족함이 없으리로다'),
+                previewVerse(isLightMode, 2, '전 12 : 1',
+                    '너는 청년의 때에 너의 창조주를 기억하라 곧 곤고한 날이 이르기 전에, 나는 아무 낙이 없다고 할 해들이 가깝기 전에'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
-}
 
-class AppSettingState extends ChangeNotifier {
-  bool _noVerseNumber = false;
-
-  bool get noVerseNumber => _noVerseNumber;
-  set noVerseNumber(val) {
-    _noVerseNumber = val;
-    notifyListeners();
-  }
-
-  bool _expandVerse = false;
-
-  bool get expandVerse => _expandVerse;
-  set expandVerse(val) {
-    _expandVerse = val;
-  }
+  Widget previewVerse(bool isLightMode, int i, String adderss, String span) =>
+      Padding(
+        padding: const EdgeInsets.all(5),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          decoration: BoxDecoration(
+            color: (isLightMode ? odEvColor : dOdEvColor)[i.isOdd ? 100 : 200],
+            shape: BoxShape.rectangle,
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            border: Border.all(
+                color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
+                width: 0.5),
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              controlAffinity: ListTileControlAffinity.leading,
+              expandedAlignment: Alignment.centerLeft,
+              leading: SizedBox(
+                width: 30,
+                height: 24,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${i + 1}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+              ),
+              trailing: IconButton(
+                icon: const Icon(
+                  Icons.delete_outline,
+                ),
+                onPressed: () {},
+              ),
+              title: Text(
+                adderss,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
+                  child: Text.rich(
+                    TextSpan(text: span),
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      textBaseline: TextBaseline.ideographic,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
 }
