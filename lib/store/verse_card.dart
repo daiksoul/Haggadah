@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:haggah/bible/struct.dart';
 import 'package:haggah/main.dart';
 import 'package:haggah/store/storage.dart';
+import 'package:haggah/util/theme.dart';
 import 'package:haggah/util/verse_data.dart';
 import 'package:provider/provider.dart';
 
@@ -108,6 +109,10 @@ class VerseCardState extends State<VerseCardPage> {
   @override
   Widget build(BuildContext context) {
     _collect = ModalRoute.of(context)!.settings.arguments as VerseCollection;
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+    print("${Theme.of(context).brightness}");
+    final borderColor =
+        isLightMode ? Colors.lightGreen.shade200 : const Color(0xFF0D2B03);
     return Scaffold(
       appBar: AppBar(
         title: Text(_collect.title),
@@ -240,7 +245,6 @@ class VerseCardState extends State<VerseCardPage> {
             Navigator.pop(context, _collect);
           },
         ),
-        backgroundColor: Colors.white,
       ),
       body: ReorderableListView.builder(
         itemBuilder: (context, i) => Padding(
@@ -249,10 +253,13 @@ class VerseCardState extends State<VerseCardPage> {
           child: AnimatedContainer(
             duration: const Duration(seconds: 1),
             decoration: BoxDecoration(
-              color: i.isOdd ? Colors.lightGreen.shade50 : Colors.white,
+              color:
+                  (isLightMode ? odEvColor : dOdEvColor)[i.isOdd ? 100 : 200],
               shape: BoxShape.rectangle,
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              border: Border.all(color: Colors.lightGreen.shade200, width: 0.5),
+              border: Border.all(
+                  color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
+                  width: 0.5),
             ),
             child: Theme(
               data:
@@ -272,10 +279,7 @@ class VerseCardState extends State<VerseCardPage> {
                     child: Text(
                       '${i + 1}',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        // fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
+                      style: const TextStyle(fontSize: 15),
                     ),
                   ),
                 ),
@@ -372,6 +376,7 @@ class VerseCardState extends State<VerseCardPage> {
                   )
                 ],
                 onExpansionChanged: (newState) {
+                  print("${Theme.of(context).brightness}");
                   _expansion[i] = newState;
                 },
               ),

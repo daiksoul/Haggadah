@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/dat.dart';
+import 'package:haggah/util/theme.dart';
 
 class BookSelectPage extends StatefulWidget {
   const BookSelectPage({super.key});
@@ -56,9 +57,9 @@ class BookSelectPageState extends State<BookSelectPage> {
                     ),
                     overlayColor: WidgetStateProperty.resolveWith(selectColor),
                   ),
-                  child: const Text(
+                  child: Text(
                     "구약",
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
                 OutlinedButton(
@@ -72,9 +73,9 @@ class BookSelectPageState extends State<BookSelectPage> {
                     ),
                     overlayColor: WidgetStateProperty.resolveWith(selectColor),
                   ),
-                  child: const Text(
+                  child: Text(
                     "신약",
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
               ],
@@ -91,7 +92,7 @@ class BookSelectPageState extends State<BookSelectPage> {
               Container(
                 width: MediaQuery.of(context).size.width / 2 - 20,
                 height: 2,
-                color: Colors.green,
+                color: Theme.of(context).primaryColor,
               ),
             ],
           ),
@@ -111,6 +112,7 @@ class BookSelectPageState extends State<BookSelectPage> {
                       },
                     ),
                     separatorBuilder: (context, _) => const Divider(
+                      color: Colors.transparent,
                       thickness: 0.5,
                       height: 0.5,
                     ),
@@ -131,6 +133,7 @@ class BookSelectPageState extends State<BookSelectPage> {
                       },
                     ),
                     separatorBuilder: (context, _) => const Divider(
+                      color: Colors.transparent,
                       thickness: 0.5,
                       height: 0.5,
                     ),
@@ -166,6 +169,7 @@ class ChapterSelectState extends State<ChapterSelectPage> {
   late Book currBook;
   @override
   Widget build(BuildContext context) {
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
     currBook =
         (ModalRoute.of(context)?.settings.arguments as Book?) ?? Book.gen;
     return Scaffold(
@@ -189,25 +193,20 @@ class ChapterSelectState extends State<ChapterSelectPage> {
           for (var t = 1; t <= currBook.chapters; t++)
             ElevatedButton(
               style: ButtonStyle(
-                side: WidgetStateProperty.all(
-                    BorderSide(color: Colors.green.shade500, width: 0.5)),
+                side: WidgetStateProperty.all(BorderSide(
+                    color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
+                    width: 0.5)),
                 shape: WidgetStateProperty.all(
                   const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                   ),
                 ),
                 elevation: const WidgetStatePropertyAll(0),
-                backgroundColor: t.isOdd
-                    ? Theme.of(context)
-                        .elevatedButtonTheme
-                        .style
-                        ?.backgroundColor
-                    : const WidgetStatePropertyAll(Colors.white),
+                backgroundColor: WidgetStatePropertyAll((isLightMode
+                    ? odEvColor
+                    : dOdEvColor)[t.isOdd ? 100 : 200]),
                 foregroundColor: t.isOdd
-                    ? Theme.of(context)
-                        .elevatedButtonTheme
-                        .style
-                        ?.foregroundColor
+                    ? theme.elevatedButtonTheme.style?.foregroundColor
                     : WidgetStatePropertyAll(Colors.green.shade200),
               ),
               onPressed: () {

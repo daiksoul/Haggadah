@@ -5,6 +5,7 @@ import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/struct.dart';
 import 'package:haggah/data/resolve.dart';
 import 'package:haggah/store/storage.dart';
+import 'package:haggah/util/theme.dart';
 import 'package:haggah/util/verse_data.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -83,9 +84,10 @@ class VerseState extends State<VersePage> {
   @override
   Widget build(BuildContext context) {
     final bookNChap = ModalRoute.of(context)!.settings.arguments as BookNChap;
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
     return PopScope(
       canPop: !_selectMode,
-      onPopInvoked: (value) async {
+      onPopInvokedWithResult: (success, _) async {
         if (_selectMode) {
           setState(() {
             _exitSelectMode();
@@ -94,13 +96,9 @@ class VerseState extends State<VersePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
           title: Text(
             "${bookNChap.book.kor} ${bookNChap.chapter}장",
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.black,
-            ),
           ),
           leading: (_selectMode)
               ? IconButton(
@@ -120,7 +118,9 @@ class VerseState extends State<VersePage> {
                 ),
         ),
         bottomNavigationBar: DecoratedBox(
-          decoration: const BoxDecoration(color: Colors.white),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
           child: Row(
             mainAxisAlignment: (_selectMode)
                 ? MainAxisAlignment.spaceAround
@@ -207,149 +207,7 @@ class VerseState extends State<VersePage> {
                     showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
-                        return Consumer<AppStorageState>(
-                          builder: (context, state, _) {
-                            return ListView(
-                              children: [
-                                ...List.generate(
-                                  state.collection.length,
-                                  (index) => ListTile(
-                                    leading: const Icon(
-                                      Icons.remove,
-                                    ),
-                                    trailing: IconButton(
-                                      icon: const Icon(
-                                        Icons.delete_outline,
-                                      ),
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (con) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  "보관함 ${state.collection[index].title}을(를) 삭제하시겠습니까?"),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  style: Theme.of(context)
-                                                      .textButtonTheme
-                                                      .style,
-                                                  child: const Text("취소"),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    state.remove(
-                                                        context,
-                                                        state
-                                                            .collection[index]);
-                                                  },
-                                                  style: Theme.of(context)
-                                                      .textButtonTheme
-                                                      .style,
-                                                  child: const Text("삭제"),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    title: Text(state.collection[index].title),
-                                    onTap: () {
-                                      VerseCollection vc =
-                                          state.collection[index];
-                                      vc.verses.add(
-                                        MultiVerse(
-                                          _verses
-                                              .where((element) =>
-                                                  element["selected"])
-                                              .map((e) => Verse(
-                                                  book: bookNChap.book,
-                                                  chapter: bookNChap.chapter,
-                                                  verse: e["ZVERSE_NUMBER"]
-                                                      as int))
-                                              .toList(),
-                                        ),
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content:
-                                              Text("구절을 ${vc.title}에 추가하였습니다"),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                      resolveWrite(
-                                          context, state.collection[index]);
-                                      Navigator.pop(context);
-                                      setState(
-                                        () {
-                                          _exitSelectMode();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.add),
-                                  title: const Text("보관함 새로만들기"),
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        final controller =
-                                            TextEditingController();
-                                        final formKey = GlobalKey<FormState>();
-                                        return AlertDialog(
-                                          title: const Text("보관함 만들기"),
-                                          content: Form(
-                                            key: formKey,
-                                            child: TextFormField(
-                                              decoration: const InputDecoration(
-                                                  labelText: "보관함 이름"),
-                                              controller: controller,
-                                              validator: (val) {
-                                                if (val == null ||
-                                                    val.isEmpty) {
-                                                  return "이름을 입력해야 합니다.";
-                                                }
-                                                return null;
-                                              },
-                                            ),
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text("취소"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                if (formKey.currentState!
-                                                    .validate()) {
-                                                  Navigator.pop(context);
-                                                  state.add(
-                                                      context,
-                                                      VerseCollection.empty(
-                                                          title:
-                                                              controller.text));
-                                                }
-                                              },
-                                              child: const Text("생성"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        return _bottomSheet();
                       },
                     );
                   },
@@ -389,14 +247,16 @@ class VerseState extends State<VersePage> {
                 leading: Text(
                   _verses[index]["ZVERSE_NUMBER"].toString(),
                   // content[index]["verse"].toString(),
-                  style: TextStyle(color: Colors.green.shade600, fontSize: 16),
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor, fontSize: 16),
                 ),
                 title: Text(parseVerseData(
                     _verses[index]["ZVERSE_CONTENT"].toString())),
                 // title: Text(content[index]["content"].toString()),
                 selected: (_verses[index]["selected"] ?? false) as bool,
-                selectedColor: Colors.black,
-                selectedTileColor: Colors.lightGreen.shade100,
+                selectedColor: isLightMode ? Colors.black : Colors.white,
+                selectedTileColor:
+                    isLightMode ? Colors.lightGreen.shade100 : dMainColor[500],
               ),
             ),
           ],
@@ -404,6 +264,131 @@ class VerseState extends State<VersePage> {
       ),
     );
   }
+
+  Widget _bottomSheet() => Consumer<AppStorageState>(
+        builder: (context, state, _) {
+          return ListView(
+            children: [
+              ...List.generate(
+                state.collection.length,
+                (index) => ListTile(
+                  leading: const Icon(
+                    Icons.remove,
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (con) {
+                          return AlertDialog(
+                            title: Text(
+                                "보관함 ${state.collection[index].title}을(를) 삭제하시겠습니까?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                style: Theme.of(context).textButtonTheme.style,
+                                child: const Text("취소"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  state.remove(
+                                      context, state.collection[index]);
+                                },
+                                style: Theme.of(context).textButtonTheme.style,
+                                child: const Text("삭제"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  title: Text(state.collection[index].title),
+                  onTap: () {
+                    VerseCollection vc = state.collection[index];
+                    vc.verses.add(
+                      MultiVerse(
+                        _verses
+                            .where((element) => element["selected"])
+                            .map((e) => Verse(
+                                book: bookNChap.book,
+                                chapter: bookNChap.chapter,
+                                verse: e["ZVERSE_NUMBER"] as int))
+                            .toList(),
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("구절을 ${vc.title}에 추가하였습니다"),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+                    resolveWrite(context, state.collection[index]);
+                    Navigator.pop(context);
+                    setState(
+                      () {
+                        _exitSelectMode();
+                      },
+                    );
+                  },
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.add),
+                title: const Text("보관함 새로만들기"),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      final controller = TextEditingController();
+                      final formKey = GlobalKey<FormState>();
+                      return AlertDialog(
+                        title: const Text("보관함 만들기"),
+                        content: Form(
+                          key: formKey,
+                          child: TextFormField(
+                            decoration:
+                                const InputDecoration(labelText: "보관함 이름"),
+                            controller: controller,
+                            validator: (val) {
+                              if (val == null || val.isEmpty) {
+                                return "이름을 입력해야 합니다.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("취소"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                Navigator.pop(context);
+                                state.add(
+                                    context,
+                                    VerseCollection.empty(
+                                        title: controller.text));
+                              }
+                            },
+                            child: const Text("생성"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
 }
 
 Route _animateRoute(Object? arg, bool forward) {

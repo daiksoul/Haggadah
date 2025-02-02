@@ -11,6 +11,7 @@ import 'package:haggah/store/storage.dart';
 import 'package:haggah/tester/card_test.dart';
 import 'package:haggah/store/verse_card.dart';
 import 'package:haggah/tester/voice_test.dart';
+import 'package:haggah/util/theme.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -36,6 +37,9 @@ class MyApp extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => MyState();
+
+  static MyState of(BuildContext context) =>
+      context.findAncestorStateOfType<MyState>()!;
 }
 
 class MyState extends State<MyApp> with WidgetsBindingObserver {
@@ -69,6 +73,8 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
     // WidgetsBinding.instance.removeObserver(this);
   }
 
+  ThemeMode myThemeMode = ThemeMode.system;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -76,54 +82,9 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
       title: 'Haggadah',
       scrollBehavior:
           const MaterialScrollBehavior().copyWith(scrollbars: false),
-      theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          fontFamily: 'Nanum',
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-              backgroundColor: Colors.green.shade200,
-              focusColor: Colors.white,
-              elevation: 1),
-          textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-                  textStyle: WidgetStatePropertyAll(
-                      TextStyle(color: Colors.green.shade200)))),
-          appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
-              shadowColor: Colors.transparent,
-              iconTheme: IconThemeData(
-                color: Colors.black,
-              ),
-              titleTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20)),
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Colors.white,
-            unselectedIconTheme: IconThemeData(color: Colors.black, size: 24),
-          ),
-          buttonTheme: ButtonThemeData(
-            buttonColor: Colors.green.shade100,
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-            textStyle:
-                const WidgetStatePropertyAll(TextStyle(color: Colors.black)),
-            backgroundColor: WidgetStatePropertyAll(Colors.green.shade100),
-          )),
-          outlinedButtonTheme: const OutlinedButtonThemeData(
-              style: ButtonStyle(
-                  textStyle:
-                      WidgetStatePropertyAll(TextStyle(color: Colors.green)))),
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)
-              .copyWith(secondary: Colors.green)),
+      theme: theme,
+      darkTheme: darkTheme,
+      themeMode: myThemeMode,
       initialRoute: "/",
       routes: {
         "/": (BuildContext context) => const HomePage(),
@@ -138,6 +99,12 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
         "/settings": (BuildContext context) => const SettingsPage(),
       },
     );
+  }
+
+  void changeTheme(ThemeMode? themeMode) {
+    setState(() {
+      myThemeMode = themeMode??myThemeMode;
+    });
   }
 }
 
