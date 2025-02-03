@@ -183,13 +183,12 @@ class CardTestState extends State<CardTestPage>
                                         _collection.verses[_waitng[index]]
                                             .getShortName(),
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                            fontSize: 20),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                          fontSize: 20,
+                                        ),
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      const SizedBox(height: 10),
                                       Expanded(
                                         child: ListView(
                                           children: [
@@ -202,9 +201,11 @@ class CardTestState extends State<CardTestPage>
                                                   Text(
                                                     "\t${map["ZVERSE_NUMBER"]} ",
                                                     style: const TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
                                                   ),
                                                   Expanded(
                                                     child: Text(
@@ -212,24 +213,14 @@ class CardTestState extends State<CardTestPage>
                                                               as String)
                                                           .trim(),
                                                       style: const TextStyle(
-                                                          fontSize: 15),
-                                                      // onSelectionChanged: (
-                                                      //     selection, reason) {
-                                                      //   final str = map["ZVERSE_CONTENT"] as String;
-                                                      //   print(str.substring(
-                                                      //       selection.start,
-                                                      //       selection.end));
-                                                      // },
-                                                      // toolbarOptions: ToolbarOptions(
-                                                      //
-                                                      // ),
+                                                        fontSize: 15,
+                                                        color: Colors.black,
+                                                      ),
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                              const SizedBox(
-                                                height: 5,
-                                              )
+                                              const SizedBox(height: 5)
                                             ]
                                           ],
                                         ),
@@ -295,22 +286,19 @@ class CardTestState extends State<CardTestPage>
                                 ],
                               ),
                             ),
-                            const VerticalDivider(
-                              color: Colors.white,
-                            ),
+                            const VerticalDivider(color: Colors.white),
                             Expanded(
                               child: Column(
                                 children: [
                                   Text(
                                     "오답 ${_wrong.length}개",
                                     style: TextStyle(
-                                        color: Colors.red.shade300,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                                      color: Colors.red.shade300,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
+                                  const SizedBox(height: 20),
                                   Expanded(
                                     child: ListView(
                                       children: [
@@ -320,7 +308,8 @@ class CardTestState extends State<CardTestPage>
                                             _collection.verses[_wrong[index]]
                                                 .getShortName(),
                                             style: const TextStyle(
-                                                color: Colors.white),
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ],

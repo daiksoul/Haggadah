@@ -156,13 +156,11 @@ class VocalTestState extends State<VocalTestPage> {
                                     ),
                                     Align(
                                       alignment: Alignment.center,
-                                      child: Text(
-                                        "오답 ${_wron.length}회",
+                                      child: Text("오답 ${_wron.length}회",
                                           style: TextStyle(
                                             color: Colors.red.shade300,
                                             fontSize: 20,
-                                          )
-                                      ),
+                                          )),
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -170,7 +168,8 @@ class VocalTestState extends State<VocalTestPage> {
                                     ...List.generate(_wron.length, (index) {
                                       return Text(
                                         '${_wron[index]}\n',
-                                        style: const TextStyle(color: Colors.white),
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                       );
                                     }),
                                   ],
@@ -182,68 +181,17 @@ class VocalTestState extends State<VocalTestPage> {
                             child: Consumer<AppSpeechTextState>(
                               builder: (context, state, _) {
                                 return MaterialButton(
-                                  onPressed: (!_listening) ? () {
-                                    setState(() {_listening = true;});
-                                    Timer.periodic(
-                                      const Duration(milliseconds: 10), (timer) {
-                                            if (_listening) {
-                                              if (state.speech.lastStatus ==
-                                                  'done') {
-                                                setState(() {
-                                                  if (_buffer.isNotEmpty) {
-                                                    _spoken += _buffer;
-                                                  }
-                                                  _buffer = "";
-
-                                                  if (_spoken.contains("아멘")) {
-                                                    final search =
-                                                        _findFromCollection();
-                                                    if (search != null) {
-                                                      final tmp =
-                                                          _spoken.replaceAll(
-                                                              RegExp(r"\s"),
-                                                              "");
-                                                      final submit = tmp
-                                                          .substring(tmp
-                                                                  .indexOf(
-                                                                      "말씀입니다") +
-                                                              "말씀입니다".length)
-                                                          .replaceAll("아멘", "");
-                                                      final answerPattern =
-                                                          RegExp(search
-                                                              .getAllVerses());
-                                                      if (answerPattern.hasMatch(submit)) {
-                                                        if(this.state==Answer.pasiv) {
-                                                          this.state =
-                                                              Answer.right;
-                                                          _rigt.add(search);
-                                                          _list.remove(search);
-                                                          HapticFeedback
-                                                              .lightImpact();
-                                                          if (_list.isEmpty) {
-                                                            _listening = false;
-                                                          }
-                                                        }
-                                                      } else {
-                                                        if(this.state==Answer.pasiv) {
-                                                          this.state = Answer.wrong;
-                                                          _wron.add(_spoken);
-                                                          HapticFeedback.heavyImpact();
-                                                        }
-                                                      }
-                                                      Timer(const Duration(milliseconds: 500), ()=>setState(()=>this.state =Answer.pasiv));
-                                                    }
-                                                    _spoken = "";
-                                                    _buffer = "";
-                                                  }
-                                                });
-                                                state.continu();
-                                              }
-                                            } else {
-                                              timer.cancel();
-                                            }
+                                  onPressed: (!_listening)
+                                      ? () {
+                                          setState(() {
+                                            _listening = true;
                                           });
+                                          Timer.periodic(
+                                            const Duration(milliseconds: 10),
+                                            (a) => timerCallback(a, state),
+                                          );
                                           state.start((res) {
+                                            print(res.recognizedWords);
                                             setState(() {
                                               _buffer = res.recognizedWords;
                                             });
@@ -277,39 +225,41 @@ class VocalTestState extends State<VocalTestPage> {
                               children: [
                                 MaterialButton(
                                   onPressed: () {
-                                    if(_list.isNotEmpty) {
+                                    if (_list.isNotEmpty) {
                                       showDialog(
                                         context: context,
-                                        builder: (context) =>
-                                            AlertDialog(
-                                              content: const Text(
-                                                  "시험을 종료하시겠습니까?"),
-                                              actions: [
-                                                TextButton(
-                                                  style: Theme.of(context).textButtonTheme.style,
+                                        builder: (context) => AlertDialog(
+                                          content: const Text("시험을 종료하시겠습니까?"),
+                                          actions: [
+                                            TextButton(
+                                              style: Theme.of(context)
+                                                  .textButtonTheme
+                                                  .style,
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("취소"),
+                                            ),
+                                            Consumer<AppSpeechTextState>(
+                                              builder: (context, state, _) {
+                                                return TextButton(
                                                   onPressed: () {
+                                                    _listening = false;
+                                                    state.stop();
+                                                    Navigator.pop(context);
                                                     Navigator.pop(context);
                                                   },
-                                                  child: const Text("취소"),
-                                                ),
-                                                Consumer<AppSpeechTextState>(
-                                                  builder: (context, state, _) {
-                                                    return TextButton(
-                                                      onPressed: () {
-                                                        _listening = false;
-                                                        state.stop();
-                                                        Navigator.pop(context);
-                                                        Navigator.pop(context);
-                                                      },
-                                                      style: Theme.of(context).textButtonTheme.style,
-                                                      child: const Text("확인"),
-                                                    );
-                                                  },
-                                                ),
-                                              ],
+                                                  style: Theme.of(context)
+                                                      .textButtonTheme
+                                                      .style,
+                                                  child: const Text("확인"),
+                                                );
+                                              },
                                             ),
+                                          ],
+                                        ),
                                       );
-                                    }else{
+                                    } else {
                                       Navigator.pop(context);
                                     }
                                   },
@@ -323,24 +273,24 @@ class VocalTestState extends State<VocalTestPage> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                if(_list.isNotEmpty)
-                                MaterialButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _spoken = "";
-                                      _buffer = "";
-                                    });
-                                  },
-                                  shape: const CircleBorder(),
-                                  color: Colors.grey,
-                                  height: 75,
-                                  minWidth: 75,
-                                  child: const Icon(
-                                    Icons.refresh,
-                                    size: 37,
-                                    color: Colors.white,
+                                if (_list.isNotEmpty)
+                                  MaterialButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _spoken = "";
+                                        _buffer = "";
+                                      });
+                                    },
+                                    shape: const CircleBorder(),
+                                    color: Colors.grey,
+                                    height: 75,
+                                    minWidth: 75,
+                                    child: const Icon(
+                                      Icons.refresh,
+                                      size: 37,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
                               ],
                             ),
                           ),
@@ -375,6 +325,56 @@ class VocalTestState extends State<VocalTestPage> {
             ),
     );
   }
+
+  void timerCallback(Timer timer, AppSpeechTextState state) {
+    if (_listening) {
+      if (state.speech.lastStatus == 'done') {
+        setState(() {
+          if (_buffer.isNotEmpty) {
+            _spoken += _buffer;
+          }
+          _buffer = "";
+
+          if (_spoken.contains("아멘")) {
+            final search = _findFromCollection();
+            if (search != null) {
+              final tmp = _spoken.replaceAll(RegExp(r"\s"), "");
+              final submit = tmp
+                  .substring(tmp.indexOf("말씀입니다") + "말씀입니다".length)
+                  .replaceAll("아멘", "");
+              final answerPattern = RegExp(search.getAllVerses());
+              if (answerPattern.hasMatch(submit)) {
+                if (this.state == Answer.pasiv) {
+                  this.state = Answer.right;
+                  _rigt.add(search);
+                  _list.remove(search);
+                  HapticFeedback.lightImpact();
+                  if (_list.isEmpty) {
+                    _listening = false;
+                  }
+                }
+              } else {
+                if (this.state == Answer.pasiv) {
+                  this.state = Answer.wrong;
+                  _wron.add(_spoken);
+                  HapticFeedback.heavyImpact();
+                }
+              }
+              Timer(
+                const Duration(milliseconds: 500),
+                () => setState(() => this.state = Answer.pasiv),
+              );
+            }
+            _spoken = "";
+            _buffer = "";
+          }
+        });
+        state.continu();
+      }
+    } else {
+      timer.cancel();
+    }
+  }
 }
 
 class AppSpeechTextState extends ChangeNotifier {
@@ -382,7 +382,7 @@ class AppSpeechTextState extends ChangeNotifier {
   void Function(SpeechRecognitionResult)? callback;
 
   void init() async {
-    await speech.initialize();
+    await speech.initialize(debugLogging: false);
     notifyListeners();
   }
 
