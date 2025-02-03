@@ -110,7 +110,6 @@ class VerseCardState extends State<VerseCardPage> {
   Widget build(BuildContext context) {
     _collect = ModalRoute.of(context)!.settings.arguments as VerseCollection;
     final isLightMode = Theme.of(context).brightness == Brightness.light;
-    print("${Theme.of(context).brightness}");
     return Scaffold(
       appBar: AppBar(
         title: Text(_collect.title),
@@ -374,7 +373,6 @@ class VerseCardState extends State<VerseCardPage> {
                   )
                 ],
                 onExpansionChanged: (newState) {
-                  print("${Theme.of(context).brightness}");
                   _expansion[i] = newState;
                 },
               ),

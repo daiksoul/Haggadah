@@ -182,48 +182,52 @@ class ChapterSelectState extends State<ChapterSelectPage> {
           },
         ),
       ),
-      body: GridView(
-        padding: const EdgeInsets.all(5),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 80,
-          mainAxisSpacing: 5,
-          crossAxisSpacing: 5,
-        ),
-        children: [
-          for (var t = 1; t <= currBook.chapters; t++)
-            ElevatedButton(
-              style: ButtonStyle(
-                side: WidgetStateProperty.all(BorderSide(
-                    color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
-                    width: 0.5)),
-                shape: WidgetStateProperty.all(
-                  const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
+      body: MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: const TextScaler.linear(1)),
+        child: GridView(
+          padding: const EdgeInsets.all(5),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 80,
+            mainAxisSpacing: 5,
+            crossAxisSpacing: 5,
+          ),
+          children: [
+            for (var t = 1; t <= currBook.chapters; t++)
+              ElevatedButton(
+                style: ButtonStyle(
+                  side: WidgetStateProperty.all(BorderSide(
+                      color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
+                      width: 0.5)),
+                  shape: WidgetStateProperty.all(
+                    const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
                   ),
+                  elevation: const WidgetStatePropertyAll(0),
+                  backgroundColor: WidgetStatePropertyAll((isLightMode
+                      ? odEvColor
+                      : dOdEvColor)[t.isOdd ? 100 : 200]),
+                  foregroundColor: t.isOdd
+                      ? theme.elevatedButtonTheme.style?.foregroundColor
+                      : WidgetStatePropertyAll(Colors.green.shade200),
                 ),
-                elevation: const WidgetStatePropertyAll(0),
-                backgroundColor: WidgetStatePropertyAll((isLightMode
-                    ? odEvColor
-                    : dOdEvColor)[t.isOdd ? 100 : 200]),
-                foregroundColor: t.isOdd
-                    ? theme.elevatedButtonTheme.style?.foregroundColor
-                    : WidgetStatePropertyAll(Colors.green.shade200),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/verses",
+                    arguments: BookNChap(currBook, t),
+                  );
+                },
+                child: Text(
+                  t.toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: (t.toString().length > 2) ? 16 : 20),
+                ),
               ),
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  "/verses",
-                  arguments: BookNChap(currBook, t),
-                );
-              },
-              child: Text(
-                t.toString(),
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: (t.toString().length > 2) ? 16 : 20),
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
