@@ -28,65 +28,162 @@ class SettingsState extends State<SettingsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('테마'),
-                Consumer<AppSettingState>(
-                  builder: (_, setting, __) => Row(
-                    children: [
-                      Column(
-                        children: [
-                          const Text('시스템'),
-                          Radio<ThemeMode>(
-                            groupValue: setting.themeMode,
-                            value: ThemeMode.system,
-                            onChanged: (v) {
-                              setting.themeMode = v ?? setting.themeMode;
-                            },
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Text('아침'),
-                          Radio<ThemeMode>(
-                            groupValue: setting.themeMode,
-                            value: ThemeMode.light,
-                            onChanged: (v) {
-                              setting.themeMode = v ?? setting.themeMode;
-                            },
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Text('저녁'),
-                          Radio<ThemeMode>(
-                            groupValue: setting.themeMode,
-                            value: ThemeMode.dark,
-                            onChanged: (v) {
-                              setting.themeMode = v ?? setting.themeMode;
-                            },
-                          ),
-                        ],
-                      )
-                    ],
+                const SizedBox(
+                  height: 40,
+                  child: Text(
+                    '시스템',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                )
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('테마'),
+                    Consumer<AppSettingState>(
+                      builder: (_, setting, __) => Row(
+                        children: [
+                          Column(
+                            children: [
+                              const Text('시스템'),
+                              Radio<ThemeMode>(
+                                groupValue: setting.themeMode,
+                                value: ThemeMode.system,
+                                onChanged: (v) {
+                                  setting.themeMode = v ?? setting.themeMode;
+                                },
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              const Text('아침'),
+                              Radio<ThemeMode>(
+                                groupValue: setting.themeMode,
+                                value: ThemeMode.light,
+                                onChanged: (v) {
+                                  setting.themeMode = v ?? setting.themeMode;
+                                },
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              const Text('저녁'),
+                              Radio<ThemeMode>(
+                                groupValue: setting.themeMode,
+                                value: ThemeMode.dark,
+                                onChanged: (v) {
+                                  setting.themeMode = v ?? setting.themeMode;
+                                },
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text('미리보기'),
+          ...lineDivider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 40,
+                  child: Text(
+                    '말씀 듣기',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('음성 속도'),
+                      Consumer<AppSettingState>(
+                        builder: (_, state, __) {
+                          print(state.speechRate);
+                          return SizedBox(
+                            width: 150,
+                            child: Slider(
+                              value: state.speechRate,
+                              onChanged: (val) {
+                                state.speechRate = val;
+                              },
+                              min: 0,
+                              max: 2,
+                              divisions: 20,
+                              label: '${state.speechRate}',
+                              inactiveColor: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
+          ...lineDivider(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 40,
+                  child: Text(
+                    '말씀 보관함',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('구절 펼치기'),
+                      Consumer<AppSettingState>(
+                        builder: (_, state, __) {
+                          return Switch(
+                            value: state.expandByDefault,
+                            onChanged: (v) {
+                              state.expandByDefault = v;
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ...lineDivider(),
+          const SizedBox(
+            height: 40,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                '미리보기',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           Transform.scale(
             alignment: Alignment.topCenter,
             scale: 0.75,
             child: Column(
+              key: UniqueKey(),
               children: [
                 previewVerse(isLightMode, 0, '창 1 : 1', '태초에 하나님이 천지를 창조하시니라'),
                 previewVerse(
@@ -100,6 +197,15 @@ class SettingsState extends State<SettingsPage> {
       ),
     );
   }
+
+  List<Widget> lineDivider() => [
+        const SizedBox(height: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Divider(thickness: 1),
+        ),
+        const SizedBox(height: 20),
+      ];
 
   Widget previewVerse(bool isLightMode, int i, String adderss, String span) =>
       Padding(

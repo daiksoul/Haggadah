@@ -21,13 +21,10 @@ Future<VerseCollection> readRemoteCollection(String name) async {
 }
 
 Future<List<VerseCollection>> readAllRemoteCollection() async {
-  final completer = Completer<List<VerseCollection>>();
-  getCollectionRef().snapshots().listen((event) {
-    completer.complete(event.docs
-        .map((e) => VerseCollection.fromJson(e.data() as Map<String, dynamic>))
-        .toList());
-  });
-  return completer.future;
+  final data = await getCollectionRef().snapshots().first;
+  return data.docs
+      .map((e) => VerseCollection.fromJson(e.data() as Map<String, dynamic>))
+      .toList();
 }
 
 CollectionReference getCollectionRef() {

@@ -79,6 +79,28 @@ ThemeData theme = ThemeData(
     collapsedTextColor: Colors.black,
     collapsedIconColor: Colors.black,
   ),
+  switchTheme: SwitchThemeData(
+    trackColor: WidgetStateProperty.resolveWith(
+      (states) {
+        if (states.contains(WidgetState.selected)) {
+          return mainColor;
+        }
+        return odEvColor[100];
+      },
+    ),
+    trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return mainColor;
+      }
+      return odEvColor[300];
+    }),
+    thumbColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.white;
+      }
+      return odEvColor[300];
+    }),
+  ),
   dividerColor: Colors.black,
   dividerTheme: DividerThemeData(color: Colors.black),
   colorScheme: ColorScheme.fromSwatch(primarySwatch: mainColor)
@@ -170,6 +192,13 @@ ThemeData darkTheme = ThemeData(
     collapsedTextColor: Colors.white,
     collapsedIconColor: Colors.white,
   ),
+  switchTheme:
+      SwitchThemeData(trackColor: WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.selected)) {
+      return dMainColor;
+    }
+    return dMainColor[400];
+  })),
   dividerColor: Colors.white,
   dividerTheme: DividerThemeData(color: Colors.white),
   colorScheme: ColorScheme.fromSwatch(
@@ -198,6 +227,7 @@ MaterialColor dMainColor = const MaterialColor(
     100: Color(0xffbcd5cb),
     200: Color(0xff8fa79e),
     300: Color(0xff657b72),
+    // 300: Color(0xffFF00cb),
     400: Color(0xff3d524a),
     500: Color(0xff182c25),
   },

@@ -6,30 +6,46 @@ import './local.dart' as local;
 
 class AppSettings {
   ThemeMode themeMode;
+  double speechRate;
+  bool expandByDefault;
 
-  AppSettings({required this.themeMode});
+  AppSettings(
+      {required this.themeMode,
+      required this.speechRate,
+      required this.expandByDefault});
 
   factory AppSettings.defaultSettings() {
-    return AppSettings(themeMode: ThemeMode.system);
+    return AppSettings(
+        themeMode: ThemeMode.system, speechRate: 1, expandByDefault: true);
   }
 
-  AppSettings copyWith({ThemeMode? themeMode}) {
+  AppSettings copyWith(
+      {ThemeMode? themeMode, double? speechRate, bool? expandByDefault}) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
+      speechRate: speechRate ?? this.speechRate,
+      expandByDefault: expandByDefault ?? this.expandByDefault,
     );
   }
 
   void copyFrom(AppSettings other) {
     themeMode = other.themeMode;
+    speechRate = other.speechRate;
+    expandByDefault = other.expandByDefault;
   }
 
   Map<String, dynamic> toJson() => {
         'themeMode': themeMode.toJson(),
+        'speechRate': speechRate,
+        'expandByDefault': expandByDefault,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> map) {
-    return AppSettings(
-      themeMode: SettingThemeMode.fromString(map['themeMode'] as String),
+    final setting = AppSettings.defaultSettings();
+    return setting.copyWith(
+      themeMode: SettingThemeMode.fromString(map['themeMode'] as String?),
+      speechRate: (map['speechRate'] as num?)?.toDouble(),
+      expandByDefault: map['expandByDefault'] as bool?,
     );
   }
 }
@@ -72,6 +88,20 @@ class AppSettingState extends ChangeNotifier {
     debounceSettings();
   }
 
+  double get speechRate => _settings.speechRate;
+  set speechRate(double v) {
+    _settings.speechRate = v;
+    notifyListeners();
+    debounceSettings();
+  }
+
+  bool get expandByDefault => _settings.expandByDefault;
+  set expandByDefault(bool b) {
+    _settings.expandByDefault = b;
+    notifyListeners();
+    debounceSettings();
+  }
+
   Future<void> loadSettings() async {
     _settings.copyFrom(await local.loadSettings());
     notifyListeners();
@@ -89,7 +119,7 @@ extension SettingThemeMode on ThemeMode {
         ThemeMode.system => 'system'
       };
 
-  static ThemeMode fromString(String string) => switch (string) {
+  static ThemeMode fromString(String? string) => switch (string) {
         'dark' => ThemeMode.dark,
         'light' => ThemeMode.light,
         'system' || _ => ThemeMode.system,
