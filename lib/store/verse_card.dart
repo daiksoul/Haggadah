@@ -1,5 +1,6 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:haggah/audio/tts.dart';
 import 'package:haggah/bible/struct.dart';
 import 'package:haggah/main.dart';
 import 'package:haggah/setting/settings_model.dart';
@@ -22,6 +23,7 @@ class VerseCardState extends State<VerseCardPage> {
   late VerseCollection _collect;
   late AppStorageState _stor;
   late ApplicationState _app;
+  late TtsState? _tts;
 
   final List<List> _verseList = [];
 
@@ -40,32 +42,34 @@ class VerseCardState extends State<VerseCardPage> {
     Future.delayed(Duration.zero, () {
       _stor.update2(_app.isSignedIn, _collect);
     });
-    if (_playing) _tts.stop();
     super.dispose();
   }
 
   @override
   void initState() {
-    ttsSetting();
     super.initState();
+    _stor = Provider.of<AppStorageState>(context, listen: false);
+    _app = Provider.of<ApplicationState>(context, listen: false);
+    _tts = Provider.of<TtsState>(context, listen: false);
 
-    Future.delayed(Duration.zero, () {
-      _stor = Provider.of<AppStorageState>(context, listen: false);
-      _app = Provider.of<ApplicationState>(context, listen: false);
+    Future.delayed(Duration.zero, () async {
       _collect = ModalRoute.of(context)!.settings.arguments as VerseCollection;
       final dExpansion =
           Provider.of<AppSettingState>(context, listen: false).expandByDefault;
       _expansion = List.generate(_collect.verses.length, (index) => dExpansion);
       _verseList.clear();
       _verseList.addAll(List.generate(_collect.verses.length, (index) => []));
-      for (int j = 0; j < _collect.verses.length; j++) {
-        _collect.verses[j].getAllVerses().then(
-          (val) {
-            _verseList[j] = val;
-            setState(() {});
-          },
-        );
-      }
+
+      await Future.wait([
+        for (int j = 0; j < _collect.verses.length; j++)
+          _collect.verses[j].getAllVerses().then(
+            (val) {
+              _verseList[j] = val;
+              setState(() {});
+            },
+          )
+      ]);
+      _tts?.setTexts(getTTSString());
     });
   }
 
@@ -107,43 +111,17 @@ class VerseCardState extends State<VerseCardPage> {
     return toRet;
   }
 
-  var _playing = false;
-  final _tts = FlutterTts();
-
-  String getTTSString() {
-    final lst = [];
+  List<String> getTTSString() {
+    final lst = <String>[];
     for (int i = 0; i < _collect.verses.length; i++) {
-      lst.add(_collect.verses[i].getName());
-      lst.addAll(
-        List.generate(
-          _verseList[i].length,
-          (j) =>
-              parseVerseDataMin(_verseList[i][j]["ZVERSE_CONTENT"].toString()),
-        ),
-      );
+      lst.add(_collect.verses[i].getName() +
+          List.generate(
+            _verseList[i].length,
+            (j) => parseVerseDataMin(
+                _verseList[i][j]["ZVERSE_CONTENT"].toString()),
+          ).join('\n'));
     }
-    return lst.join('\n');
-  }
-
-  void ttsSetting() async {
-    final rate =
-        Provider.of<AppSettingState>(context, listen: false).speechRate;
-    await _tts.awaitSpeakCompletion(true);
-    _tts.setSpeechRate(rate);
-    _tts.setLanguage("ko-KR");
-    // _tts.setVoice(
-    //   {
-    //     "name": "ko-KR-default",
-    //     "locale": "kor-default",
-    //   },
-    // );
-
-    // final voices = await _tts.getVoices as List<Object?>;
-    // final jsonVoices = voices.map((e) => jsonEncode(e)).toList();
-    // final availableVoices = jsonVoices.map((e) => jsonDecode(e)).toList();
-    // for (final m in jsonVoices) {
-    //   print(m);
-    // }
+    return lst;
   }
 
   @override
@@ -156,27 +134,23 @@ class VerseCardState extends State<VerseCardPage> {
         appBar: AppBar(
           title: Text(_collect.title),
           actions: [
-            IconButton(
-              icon: Icon(!_playing
-                  ? Icons.play_circle_outline
-                  : Icons.stop_circle_outlined),
-              onPressed: !_playing
-                  ? () async {
-                      _tts.speak(getTTSString()).then((_) {
-                        setState(() {
-                          _playing = false;
-                        });
-                      });
-                      setState(() {
-                        _playing = true;
-                      });
-                    }
-                  : () {
-                      _tts.pause();
-                      setState(() {
-                        _playing = false;
-                      });
-                    },
+            StreamBuilder<PlaybackState>(
+              stream: _tts?.audioHandler.playbackState,
+              builder: (context, snapshot) {
+                final playing = snapshot.data?.playing == true;
+                return IconButton(
+                  icon: Icon(!playing
+                      ? Icons.play_circle_outline
+                      : Icons.stop_circle_outlined),
+                  onPressed: !playing
+                      ? () async {
+                          _tts?.audioHandler.play();
+                        }
+                      : () {
+                          _tts?.audioHandler.pause();
+                        },
+                );
+              },
             ),
             PopupMenuButton<int>(
               position: PopupMenuPosition.under,

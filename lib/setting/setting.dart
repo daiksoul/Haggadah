@@ -110,7 +110,6 @@ class SettingsState extends State<SettingsPage> {
                       Text('음성 속도'),
                       Consumer<AppSettingState>(
                         builder: (_, state, __) {
-                          print(state.speechRate);
                           return SizedBox(
                             width: 150,
                             child: Slider(
@@ -124,6 +123,25 @@ class SettingsState extends State<SettingsPage> {
                               label: '${state.speechRate}',
                               inactiveColor: Colors.grey,
                             ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('반복'),
+                      Consumer<AppSettingState>(
+                        builder: (_, state, __) {
+                          return Switch(
+                            value: state.repeat,
+                            onChanged: (v) {
+                              state.repeat = v;
+                            },
                           );
                         },
                       ),

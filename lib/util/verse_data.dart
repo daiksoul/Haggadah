@@ -12,10 +12,10 @@ String parseVerseDataMin(String data) {
 }
 
 String numberToText(int number) {
-  var n = number;
-  final hund = n / 100;
+  int n = number;
+  final hund = n ~/ 100;
   n = n % 100;
-  final ten = n / 10;
+  final ten = n ~/ 10;
   n = n % 10;
   final one = n;
 

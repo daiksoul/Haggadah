@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:haggah/audio/tts.dart';
 import 'package:haggah/bible/select.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/resolve.dart';
@@ -20,10 +21,12 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appSettingState = AppSettingState();
+  final ttsState = TtsState();
   await Future.wait(
     [
       Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
       appSettingState.loadSettings(),
+      ttsState.init(),
     ],
   );
   runApp(MultiProvider(
@@ -32,6 +35,11 @@ void main() async {
       ChangeNotifierProvider(create: (context) => AppStorageState()),
       ChangeNotifierProvider(create: (context) => AppSpeechTextState()),
       ChangeNotifierProvider(create: (context) => appSettingState),
+      ChangeNotifierProxyProvider<AppSettingState, TtsState>(
+        create: (context) => ttsState,
+        update: (context, value, previous) => previous ?? ttsState
+          ..applySettings(value),
+      ),
     ],
     child: const MyApp(),
   ));
@@ -47,11 +55,9 @@ class MyApp extends StatefulWidget {
 class MyState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
-    // WidgetsBinding.instance.addObserver(this);
     Future.delayed(
       Duration.zero,
       () {
-        // Provider.of<AppSettingState>(context, listen: false).loadSettings();
         if (FirebaseAuth.instance.currentUser != null) {
           Provider.of<ApplicationState>(context, listen: false).signIn();
         } else {
@@ -73,7 +79,6 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     Provider.of<AppSpeechTextState>(context, listen: false).stop();
     super.dispose();
-    // WidgetsBinding.instance.removeObserver(this);
   }
 
   // This widget is the root of your application.

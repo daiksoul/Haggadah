@@ -7,23 +7,32 @@ import './local.dart' as local;
 class AppSettings {
   ThemeMode themeMode;
   double speechRate;
+  bool repeat;
   bool expandByDefault;
 
   AppSettings(
       {required this.themeMode,
       required this.speechRate,
+      required this.repeat,
       required this.expandByDefault});
 
   factory AppSettings.defaultSettings() {
     return AppSettings(
-        themeMode: ThemeMode.system, speechRate: 1, expandByDefault: true);
+        themeMode: ThemeMode.system,
+        speechRate: 1,
+        repeat: false,
+        expandByDefault: true);
   }
 
   AppSettings copyWith(
-      {ThemeMode? themeMode, double? speechRate, bool? expandByDefault}) {
+      {ThemeMode? themeMode,
+      double? speechRate,
+      bool? repeat,
+      bool? expandByDefault}) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
       speechRate: speechRate ?? this.speechRate,
+      repeat: repeat ?? this.repeat,
       expandByDefault: expandByDefault ?? this.expandByDefault,
     );
   }
@@ -31,12 +40,14 @@ class AppSettings {
   void copyFrom(AppSettings other) {
     themeMode = other.themeMode;
     speechRate = other.speechRate;
+    repeat = other.repeat;
     expandByDefault = other.expandByDefault;
   }
 
   Map<String, dynamic> toJson() => {
         'themeMode': themeMode.toJson(),
         'speechRate': speechRate,
+        'repeat': repeat,
         'expandByDefault': expandByDefault,
       };
 
@@ -45,6 +56,7 @@ class AppSettings {
     return setting.copyWith(
       themeMode: SettingThemeMode.fromString(map['themeMode'] as String?),
       speechRate: (map['speechRate'] as num?)?.toDouble(),
+      repeat: map['repeat'] as bool?,
       expandByDefault: map['expandByDefault'] as bool?,
     );
   }
@@ -74,13 +86,6 @@ class AppSettingState extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _expandVerse = false;
-
-  bool get expandVerse => _expandVerse;
-  set expandVerse(val) {
-    _expandVerse = val;
-  }
-
   ThemeMode get themeMode => _settings.themeMode;
   set themeMode(ThemeMode v) {
     _settings.themeMode = v;
@@ -91,6 +96,13 @@ class AppSettingState extends ChangeNotifier {
   double get speechRate => _settings.speechRate;
   set speechRate(double v) {
     _settings.speechRate = v;
+    notifyListeners();
+    debounceSettings();
+  }
+
+  bool get repeat => _settings.repeat;
+  set repeat(bool b) {
+    _settings.repeat = b;
     notifyListeners();
     debounceSettings();
   }
