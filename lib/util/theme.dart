@@ -85,20 +85,20 @@ ThemeData theme = ThemeData(
         if (states.contains(WidgetState.selected)) {
           return mainColor;
         }
-        return odEvColor[100];
+        return Colors.white;
       },
     ),
     trackOutlineColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
         return mainColor;
       }
-      return odEvColor[300];
+      return Colors.black87;
     }),
     thumbColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
         return Colors.white;
       }
-      return odEvColor[300];
+      return Colors.black87;
     }),
   ),
   dividerColor: Colors.black,
