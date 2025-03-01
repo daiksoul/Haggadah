@@ -182,9 +182,7 @@ class ChapterSelectState extends State<ChapterSelectPage> {
           },
         ),
       ),
-      body: MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: const TextScaler.linear(1)),
+      body: MediaQuery.withNoTextScaling(
         child: GridView(
           padding: const EdgeInsets.all(5),
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -196,6 +194,7 @@ class ChapterSelectState extends State<ChapterSelectPage> {
             for (var t = 1; t <= currBook.chapters; t++)
               ElevatedButton(
                 style: ButtonStyle(
+                  padding: const WidgetStatePropertyAll(EdgeInsets.all(0)),
                   side: WidgetStateProperty.all(BorderSide(
                       color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
                       width: 0.5)),
