@@ -34,7 +34,7 @@ class TtsState extends ChangeNotifier {
 
   void applySettings(AppSettingState setting) {
     _tts.setSpeechRate(setting.speechRate);
-    _playHandler.repeat = setting.repeat;
+    _playHandler.repeatOption = setting.repeatOption;
   }
 
   void setTexts(List<String> texts) {

@@ -69,17 +69,18 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
           List.generate(_collect.verses.length, (index) => []),
         );
 
-      await Future.wait([
-        for (int j = 0; j < _collect.verses.length; j++)
-          _collect.verses[j].getAllVerses().then(
-            (val) {
-              _verseList[j] = val;
-              setState(() {});
-            },
-          )
-      ]);
-      _tts?.setTexts(getTTSString());
-    });
+        await Future.wait([
+          for (int j = 0; j < _collect.verses.length; j++)
+            _collect.verses[j].getAllVerses().then(
+              (val) {
+                _verseList[j] = val;
+                setState(() {});
+              },
+            )
+        ]);
+        _tts?.setTexts(getTTSString());
+      },
+    );
   }
 
   TextSpan _generateSpan(int index) {
@@ -152,7 +153,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                       ? Icons.play_circle_outline
                       : Icons.stop_circle_outlined),
                   onPressed: !playing
-                      ? () async {
+                      ? () {
                           _tts?.audioHandler.play();
                         }
                       : () {
@@ -205,6 +206,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
             //   icon: Icon(
             //       _cExpaneded ? Icons.close_fullscreen : Icons.open_in_full),
             //   onPressed: () {
+
             //     setState(() {
             //       _cExpaneded = !_cExpaneded;
             //       for (var i = 0; i < _verseList.length; i++) {
@@ -321,28 +323,39 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                       ),
                     ),
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () {
-                      setState(() {
-                        final removed = _collect.verses.removeAt(i);
-                        final removedId = i;
-                        final removedT = _verseList.removeAt(i);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
-                          action: SnackBarAction(
-                            label: "취소",
-                            onPressed: () {
-                              setState(() {
-                                _collect.verses.insert(removedId, removed);
-                                _verseList.insert(i, removedT);
-                              });
-                            },
-                          ),
-                        ));
-                      });
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.play_circle_outline),
+                        onPressed: () {
+                          _tts?.audioHandler.skipToQueueItem(i);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () {
+                          setState(() {
+                            final removed = _collect.verses.removeAt(i);
+                            final removedId = i;
+                            final removedT = _verseList.removeAt(i);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
+                              action: SnackBarAction(
+                                label: "취소",
+                                onPressed: () {
+                                  setState(() {
+                                    _collect.verses.insert(removedId, removed);
+                                    _verseList.insert(i, removedT);
+                                  });
+                                },
+                              ),
+                            ));
+                          });
+                        },
+                      ),
+                    ],
                   ),
                   title: Text(
                     _collect.verses[i].getShortName(),

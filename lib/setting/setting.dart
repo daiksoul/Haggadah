@@ -136,14 +136,53 @@ class SettingsState extends State<SettingsPage> {
                     children: [
                       Text('반복'),
                       Consumer<AppSettingState>(
-                        builder: (_, state, __) {
-                          return Switch(
-                            value: state.repeat,
-                            onChanged: (v) {
-                              state.repeat = v;
-                            },
-                          );
-                        },
+                        builder: (_, setting, __) => DropdownMenu<RepeatOption>(
+                          initialSelection: setting.repeatOption,
+                          dropdownMenuEntries: const [
+                            DropdownMenuEntry(
+                              value: RepeatOption.noRepeat,
+                              label: '반복 없음',
+                            ),
+                            DropdownMenuEntry(
+                              value: RepeatOption.repeatAll,
+                              label: '전체 반복',
+                            ),
+                            DropdownMenuEntry(
+                              value: RepeatOption.repeatOne,
+                              label: '한절 반복',
+                            ),
+                          ],
+                          onSelected: (v) {
+                            setting.repeatOption = v ?? setting.repeatOption;
+                          },
+                          trailingIcon: const Icon(
+                            Icons.arrow_drop_down,
+                            size: 20,
+                          ),
+                          selectedTrailingIcon: const Icon(
+                            Icons.arrow_drop_up,
+                            size: 20,
+                          ),
+                          width: 140,
+                          enableSearch: false,
+                          inputDecorationTheme: InputDecorationTheme(
+                            labelStyle: const TextStyle(fontSize: 12),
+                            constraints: BoxConstraints.tight(
+                              const Size.fromHeight(40),
+                            ),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 15),
+                          ),
+                          menuStyle: const MenuStyle(
+                            visualDensity: VisualDensity(
+                              horizontal: 0,
+                              vertical: -1,
+                            ),
+                            padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                            elevation: WidgetStatePropertyAll(1),
+                          ),
+                          textStyle: const TextStyle(fontSize: 14),
+                        ),
                       ),
                     ],
                   ),
@@ -236,7 +275,7 @@ class SettingsState extends State<SettingsPage> {
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             border: Border.all(
                 color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
-                width: 0.5),
+                width: 1),
           ),
           child: Theme(
             data: Theme.of(context).copyWith(

@@ -4,35 +4,52 @@ import 'package:flutter/material.dart';
 
 import './local.dart' as local;
 
+enum RepeatOption {
+  noRepeat('no_repeat'),
+  repeatAll('repeat_all'),
+  repeatOne('repeat_one');
+
+  final String string;
+
+  const RepeatOption(this.string);
+
+  static RepeatOption fromString(String? string) {
+    return RepeatOption.values.firstWhere(
+      (e) => e.string == string,
+      orElse: () => RepeatOption.noRepeat,
+    );
+  }
+}
+
 class AppSettings {
   ThemeMode themeMode;
   double speechRate;
-  bool repeat;
+  RepeatOption repeatOption;
   bool expandByDefault;
 
   AppSettings(
       {required this.themeMode,
       required this.speechRate,
-      required this.repeat,
+      required this.repeatOption,
       required this.expandByDefault});
 
   factory AppSettings.defaultSettings() {
     return AppSettings(
         themeMode: ThemeMode.system,
         speechRate: 1,
-        repeat: false,
+        repeatOption: RepeatOption.noRepeat,
         expandByDefault: true);
   }
 
   AppSettings copyWith(
       {ThemeMode? themeMode,
       double? speechRate,
-      bool? repeat,
+      RepeatOption? repeatOption,
       bool? expandByDefault}) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
       speechRate: speechRate ?? this.speechRate,
-      repeat: repeat ?? this.repeat,
+      repeatOption: repeatOption ?? this.repeatOption,
       expandByDefault: expandByDefault ?? this.expandByDefault,
     );
   }
@@ -40,14 +57,14 @@ class AppSettings {
   void copyFrom(AppSettings other) {
     themeMode = other.themeMode;
     speechRate = other.speechRate;
-    repeat = other.repeat;
+    repeatOption = other.repeatOption;
     expandByDefault = other.expandByDefault;
   }
 
   Map<String, dynamic> toJson() => {
         'themeMode': themeMode.toJson(),
         'speechRate': speechRate,
-        'repeat': repeat,
+        'repeatOption': repeatOption.string,
         'expandByDefault': expandByDefault,
       };
 
@@ -56,7 +73,7 @@ class AppSettings {
     return setting.copyWith(
       themeMode: SettingThemeMode.fromString(map['themeMode'] as String?),
       speechRate: (map['speechRate'] as num?)?.toDouble(),
-      repeat: map['repeat'] as bool?,
+      repeatOption: RepeatOption.fromString(map['repeatOption'] as String?),
       expandByDefault: map['expandByDefault'] as bool?,
     );
   }
@@ -100,9 +117,9 @@ class AppSettingState extends ChangeNotifier {
     debounceSettings();
   }
 
-  bool get repeat => _settings.repeat;
-  set repeat(bool b) {
-    _settings.repeat = b;
+  RepeatOption get repeatOption => _settings.repeatOption;
+  set repeatOption(RepeatOption o) {
+    _settings.repeatOption = o;
     notifyListeners();
     debounceSettings();
   }

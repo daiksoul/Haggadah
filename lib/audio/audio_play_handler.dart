@@ -1,11 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:haggah/setting/settings_model.dart';
 
 class AudioPlayHandler extends BaseAudioHandler {
   late final FlutterTts _tts;
   final List<String> _texts = [];
   var currentIndex = 0;
-  var repeat = false;
+  var repeatOption = RepeatOption.noRepeat;
 
   void setTexts(List<String> newTexts) {
     _texts.clear();
@@ -72,6 +73,13 @@ class AudioPlayHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<void> skipToQueueItem(int index) async {
+    currentIndex = index;
+    _tts.stop();
+    play();
+  }
+
+  @override
   Future<void> rewind() async {
     currentIndex = 0;
     _tts.stop();
@@ -91,10 +99,13 @@ class AudioPlayHandler extends BaseAudioHandler {
         processingState: AudioProcessingState.idle,
       ),
     );
+
     _tts.setCompletionHandler(() {
-      if (currentIndex != _texts.length - 1) {
+      if (repeatOption == RepeatOption.repeatOne) {
+        play();
+      } else if (currentIndex != _texts.length - 1) {
         skipToNext();
-      } else if (repeat) {
+      } else if (repeatOption == RepeatOption.repeatAll) {
         rewind();
       } else {
         stop();
