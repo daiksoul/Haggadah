@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/verse.dart';
 import 'package:haggah/util/verse_data.dart';
-import 'package:sqflite/sqflite.dart';
 
 /// Collection of [MultiVerse]
 ///
@@ -197,8 +196,7 @@ class Verse {
 
   /// Get query result from the DB corresponding to this verse
   Future<Map> getVerse() async {
-    Database db = await getDB();
-    return (await db.rawQuery(
+    return (await DBManager.database.rawQuery(
             "SELECT * FROM ZVERSE WHERE ZVERSE_NUMBER = $verse and ZTOCHAPTER = (SELECT Z_PK FROM ZCHAPTER WHERE ZCHAPTER_NUMBER = $chapter AND ZTOBOOK = (SELECT Z_PK FROM ZBOOK WHERE ZBOOK_INDEX=${book.index + 1}))"))
         .map((e) => Map.of(e))
         .toList()[0];

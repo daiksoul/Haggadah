@@ -27,6 +27,7 @@ void main() async {
       Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
       appSettingState.loadSettings(),
       ttsState.init(),
+      DBManager.init(),
     ],
   );
   runApp(MultiProvider(
@@ -78,6 +79,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     Provider.of<AppSpeechTextState>(context, listen: false).stop();
+    DBManager.dispose();
     super.dispose();
   }
 

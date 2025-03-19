@@ -11,26 +11,38 @@ import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future<Database> getDB() async {
-  var databasesPath = await getDatabasesPath();
-  var path = join(databasesPath, 'bible/bible.db');
-  var exists = await databaseExists(path);
+class DBManager {
+  static late Database database;
 
-  if (!exists) {
-    try {
-      await Directory(dirname(path)).create(recursive: true);
-    } catch (_) {}
-
-    var data = await rootBundle.load(join('assets', 'bible.sqlite3'));
-    List<int> bytes = data.buffer.asUint8List(
-      data.offsetInBytes,
-      data.lengthInBytes,
-    );
-
-    await File(path).writeAsBytes(bytes, flush: true);
+  static Future<void> init() async {
+    database = await getDB();
   }
 
-  return await openDatabase(path);
+  static Future<Database> getDB() async {
+    var databasesPath = await getDatabasesPath();
+    var path = join(databasesPath, 'bible/bible.db');
+    var exists = await databaseExists(path);
+
+    if (!exists) {
+      try {
+        await Directory(dirname(path)).create(recursive: true);
+      } catch (_) {}
+
+      var data = await rootBundle.load(join('assets', 'bible.sqlite3'));
+      List<int> bytes = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
+
+      await File(path).writeAsBytes(bytes, flush: true);
+    }
+
+    return await openDatabase(path);
+  }
+
+  static void dispose() {
+    database.close();
+  }
 }
 
 class VersePage extends StatefulWidget {
@@ -46,9 +58,7 @@ class VerseState extends State<VersePage> {
   late BookNChap bookNChap;
 
   Future<List<Map<String, Object?>>> _getVerses(BookNChap bNC) async {
-    var db = await getDB();
-
-    return await db.rawQuery(
+    return await DBManager.database.rawQuery(
         "SELECT * FROM ZVERSE WHERE ZTOCHAPTER = (SELECT Z_PK FROM ZCHAPTER WHERE ZCHAPTER_NUMBER = ${bNC.chapter} AND ZTOBOOK = (SELECT Z_PK FROM ZBOOK WHERE ZBOOK_INDEX=${bNC.book.index + 1})) ORDER BY ZVERSE_NUMBER");
   }
 
