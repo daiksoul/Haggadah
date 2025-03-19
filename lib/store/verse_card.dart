@@ -267,7 +267,17 @@ class VerseCardState extends State<VerseCardPage> {
           ),
         ),
         body: Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          data: Theme.of(context).copyWith(
+            dividerColor: Colors.transparent,
+            expansionTileTheme: const ExpansionTileThemeData(
+              shape: RoundedRectangleBorder(
+                side: BorderSide.none,
+              ),
+              collapsedShape: RoundedRectangleBorder(
+                side: BorderSide.none,
+              ),
+            ),
+          ),
           child: ReorderableListView.builder(
             itemBuilder: (context, i) => Padding(
               key: PageStorageKey(_collect.verses[i].getShortName()),
@@ -281,8 +291,9 @@ class VerseCardState extends State<VerseCardPage> {
                   shape: BoxShape.rectangle,
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                   border: Border.all(
-                      color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
-                      width: 0.5),
+                    color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
+                    width: 1,
+                  ),
                 ),
                 child: ExpansionTile(
                   key: ValueKey(i),

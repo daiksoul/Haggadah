@@ -239,7 +239,17 @@ class SettingsState extends State<SettingsPage> {
                 width: 0.5),
           ),
           child: Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            data: Theme.of(context).copyWith(
+              dividerColor: Colors.transparent,
+              expansionTileTheme: const ExpansionTileThemeData(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide.none,
+                ),
+                collapsedShape: RoundedRectangleBorder(
+                  side: BorderSide.none,
+                ),
+              ),
+            ),
             child: ExpansionTile(
               initiallyExpanded: true,
               controlAffinity: ListTileControlAffinity.leading,

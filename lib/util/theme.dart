@@ -23,6 +23,18 @@ ThemeData theme = ThemeData(
       side: BorderSide(color: odEvColor[300]!),
     ),
   ),
+  inputDecorationTheme: InputDecorationTheme(
+    labelStyle: TextStyle(
+      color: mainColor,
+    ),
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+      color: mainColor[100]!,
+      width: 1,
+    )),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(width: 1, color: mainColor[100]!)),
+  ),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.white,
   ),
@@ -78,6 +90,12 @@ ThemeData theme = ThemeData(
     iconColor: Colors.black,
     collapsedTextColor: Colors.black,
     collapsedIconColor: Colors.black,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: BorderSide(color: mainColor[100]!)),
+    collapsedShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: BorderSide(color: mainColor[100]!)),
   ),
   switchTheme: SwitchThemeData(
     trackColor: WidgetStateProperty.resolveWith(
@@ -135,6 +153,14 @@ ThemeData darkTheme = ThemeData(
     labelStyle: TextStyle(
       color: dMainColor,
     ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: dMainColor[100]!,
+        width: 1,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(width: 1, color: dMainColor[100]!)),
   ),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.black,
@@ -191,6 +217,12 @@ ThemeData darkTheme = ThemeData(
     iconColor: Colors.white,
     collapsedTextColor: Colors.white,
     collapsedIconColor: Colors.white,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: BorderSide(color: dMainColor[100]!)),
+    collapsedShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: BorderSide(color: dMainColor[100]!)),
   ),
   switchTheme:
       SwitchThemeData(trackColor: WidgetStateProperty.resolveWith((states) {
