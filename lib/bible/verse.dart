@@ -52,7 +52,7 @@ class VersePage extends StatefulWidget {
   State<StatefulWidget> createState() => VerseState();
 }
 
-class VerseState extends State<VersePage> {
+class VerseState extends State<VersePage> with WidgetsBindingObserver {
   bool _selectMode = false;
   final List<Map> _verses = [];
   late BookNChap bookNChap;
@@ -72,23 +72,23 @@ class VerseState extends State<VersePage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(
-      Duration.zero,
-      () {
-        _verses.clear();
-        bookNChap =
-            ModalRoute.of(this.context)!.settings.arguments as BookNChap;
-        _getVerses(bookNChap).then(
-          (map) {
-            _verses.addAll(map.map((e) => Map.of(e)));
-            for (int i = 0; i < _verses.length; i++) {
-              _verses[i].putIfAbsent("selected", () => false);
-            }
-            setState(() {});
-          },
-        );
-      },
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _verses.clear();
+      bookNChap = ModalRoute.of(this.context)!.settings.arguments as BookNChap;
+      _getVerses(bookNChap).then(
+        (map) {
+          _verses.addAll(map.map((e) => Map.of(e)));
+          for (int i = 0; i < _verses.length; i++) {
+            _verses[i].putIfAbsent("selected", () => false);
+            _keys.add(GlobalKey());
+          }
+          setState(() {});
+          // if (bookNChap.verse != null) {
+          //   Scrollable.ensureVisible(_keys[bookNChap.verse!].currentContext!);
+          // }
+        },
+      );
+    });
   }
 
   @override

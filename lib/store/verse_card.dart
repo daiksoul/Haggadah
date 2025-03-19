@@ -19,7 +19,7 @@ class VerseCardPage extends StatefulWidget {
   State<StatefulWidget> createState() => VerseCardState();
 }
 
-class VerseCardState extends State<VerseCardPage> {
+class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
   late VerseCollection _collect;
   late AppStorageState _stor;
   late ApplicationState _app;
@@ -52,13 +52,22 @@ class VerseCardState extends State<VerseCardPage> {
     _app = Provider.of<ApplicationState>(context, listen: false);
     _tts = Provider.of<TtsState>(context, listen: false);
 
-    Future.delayed(Duration.zero, () async {
-      _collect = ModalRoute.of(context)!.settings.arguments as VerseCollection;
-      final dExpansion =
-          Provider.of<AppSettingState>(context, listen: false).expandByDefault;
-      _expansion = List.generate(_collect.verses.length, (index) => dExpansion);
-      _verseList.clear();
-      _verseList.addAll(List.generate(_collect.verses.length, (index) => []));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        _collect =
+            ModalRoute.of(context)!.settings.arguments as VerseCollection;
+        final dExpansion = Provider.of<AppSettingState>(
+          context,
+          listen: false,
+        ).expandByDefault;
+        _expansion = List.generate(
+          _collect.verses.length,
+          (index) => dExpansion,
+        );
+        _verseList.clear();
+        _verseList.addAll(
+          List.generate(_collect.verses.length, (index) => []),
+        );
 
       await Future.wait([
         for (int j = 0; j < _collect.verses.length; j++)
