@@ -7,6 +7,7 @@ import 'package:haggah/bible/verse.dart';
 import 'package:haggah/data/resolve.dart';
 import 'package:haggah/home.dart';
 import 'package:haggah/login.dart';
+import 'package:haggah/search/search.dart';
 import 'package:haggah/setting/setting.dart';
 import 'package:haggah/setting/settings_model.dart';
 import 'package:haggah/store/storage.dart';
@@ -106,6 +107,7 @@ class MyState extends State<MyApp> with WidgetsBindingObserver {
           "/test": (BuildContext context) => const VocalTestPage(),
           "/login": (BuildContext context) => const LoginPage(),
           "/settings": (BuildContext context) => const SettingsPage(),
+          "/search": (BuildContext context) => SearchPage(),
         },
       ),
     );

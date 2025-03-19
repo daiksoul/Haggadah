@@ -35,6 +35,14 @@ class BookSelectPageState extends State<BookSelectPage> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, "/search");
+            },
+            icon: Icon(Icons.search),
+          ),
+        ],
       ),
       body: Column(
         children: [

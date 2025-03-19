@@ -55,6 +55,7 @@ class VersePage extends StatefulWidget {
 class VerseState extends State<VersePage> with WidgetsBindingObserver {
   bool _selectMode = false;
   final List<Map> _verses = [];
+  final List<GlobalKey> _keys = [];
   late BookNChap bookNChap;
 
   Future<List<Map<String, Object?>>> _getVerses(BookNChap bNC) async {
@@ -231,6 +232,7 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
             ...List.generate(
               _verses.length,
               (index) => ListTile(
+                key: _keys[index],
                 onLongPress: () {
                   if (!_selectMode) {
                     setState(
