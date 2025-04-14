@@ -1,13 +1,15 @@
 String parseVerseData(String data) {
   return data
-      .replaceAllMapped(RegExp(r'\[[^\[]*\]|\([^\(]*\)'), (_) => '')
+      .replaceAllMapped(
+          RegExp(r'^\[[^\[]*\]|\([^\(]*셀라[^\(]*\)|어떤 사본에는.*'), (_) => '')
       .trim()
       .replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
 }
 
 String parseVerseDataMin(String data) {
   return data
-      .replaceAllMapped(RegExp(r'\[[^\[]*\]|\([^\(]*\)'), (_) => '')
+      .replaceAllMapped(
+          RegExp(r'^\[[^\[]*\]|\([^\(]*셀라[^\(]*\)|어떤 사본에는.*'), (_) => '')
       .trim();
 }
 
