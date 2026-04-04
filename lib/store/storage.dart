@@ -297,7 +297,25 @@ Widget genCard(BuildContext context, VerseCollection collection, bool od) {
                           icon: const Icon(Icons.delete),
                           text: const Text("삭제"),
                           onPressed: () {
-                            state.remove(context, collection);
+                            showDialog(context: context, builder: (context) => AlertDialog(
+                                title: const Text("경고"),
+                                content: Text("정말로 보관함 ${collection.title}을/를 삭제하시겠습니까?"),
+                                actions: [
+                                  TextButton(
+                                    child: const Text('취소'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('확인'),
+                                    onPressed: () {
+                                      state.remove(context, collection);
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              ));
                           },
                         );
                       },
