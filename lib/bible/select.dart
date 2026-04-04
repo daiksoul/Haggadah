@@ -218,9 +218,14 @@ class ChapterSelectState extends State<ChapterSelectPage> {
                     backgroundColor: WidgetStatePropertyAll((isLightMode
                         ? odEvColor
                         : dOdEvColor)[t.isOdd ? 100 : 200]),
-                    foregroundColor: t.isOdd
-                        ? theme.elevatedButtonTheme.style?.foregroundColor
-                        : WidgetStatePropertyAll(Colors.green.shade200),
+                    foregroundColor:
+                      isLightMode ?
+                        t.isOdd
+                          ? theme.elevatedButtonTheme.style?.foregroundColor
+                          : WidgetStatePropertyAll(Colors.green.shade200)
+                        : t.isEven
+                          ? theme.elevatedButtonTheme.style?.foregroundColor
+                          : WidgetStatePropertyAll(Colors.green.shade200),
                   ),
                   onPressed: () {
                     Navigator.pushNamed(
