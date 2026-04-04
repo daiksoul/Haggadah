@@ -272,6 +272,18 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
               ),
             ),
           ],
+                      if (_verses.where((element) => element["selected"]).isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("선택된 구절이 없습니다"),
+                            duration: Duration(milliseconds: 500),
+                          ),
+                        );
+                        setState(
+                          () => _exitSelectMode()
+                        );
+                        return;
+                      }
         ),
       ),
     );
