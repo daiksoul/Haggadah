@@ -448,6 +448,8 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                 child: child,
               );
             },
+                key: PageStorageKey('$i'),
+                              '${i}_1'),
           ),
         ),
       ),
