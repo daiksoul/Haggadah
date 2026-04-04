@@ -247,7 +247,7 @@ Widget genCard(BuildContext context, VerseCollection collection, bool od) {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     labeledIconButton(
-                      icon: const Icon(Icons.share),
+                      icon: const Icon(Icons.share, size: 20),
                       text: const Text("공유"),
                       onPressed: () async {
                         final dat = collection.toJson();
@@ -294,7 +294,7 @@ Widget genCard(BuildContext context, VerseCollection collection, bool od) {
                     Consumer<AppStorageState>(
                       builder: (context, state, _) {
                         return labeledIconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(Icons.delete, size: 20),
                           text: const Text("삭제"),
                           onPressed: () {
                             showDialog(context: context, builder: (context) => AlertDialog(
@@ -336,22 +336,23 @@ Widget labeledIconButton({
   required Text text,
   required void Function()? onPressed,
 }) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.end,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      SizedBox(
-        width: 20,
-        height: 20,
-        child: IconButton(
-          icon: icon,
-          onPressed: onPressed,
-          iconSize: 20,
-          padding: EdgeInsets.zero,
-        ),
+  return InkWell(
+    onTap: onPressed,
+    child: Padding(
+      padding: const EdgeInsetsGeometry.symmetric(horizontal: 7.5),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: icon,
+          ),
+          text
+        ],
       ),
-      text
-    ],
+    ),
   );
 }
 
