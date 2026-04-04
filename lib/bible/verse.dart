@@ -105,173 +105,117 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
           });
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "${bookNChap.book.kor} ${bookNChap.chapter}장",
-            textAlign: TextAlign.center,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "${bookNChap.book.kor} ${bookNChap.chapter}장",
+              textAlign: TextAlign.center,
+            ),
+            leading: (_selectMode)
+                ? IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      setState(() {
+                        _exitSelectMode();
+                      });
+                    })
+                : IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                    onPressed: () {
+                      Navigator.popUntil(context, (route) {
+                        return route.settings.name == "/chapters";
+                      });
+                    },
+                  ),
           ),
-          leading: (_selectMode)
-              ? IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    setState(() {
-                      _exitSelectMode();
-                    });
-                  })
-              : IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new),
-                  onPressed: () {
-                    Navigator.popUntil(context, (route) {
-                      return route.settings.name == "/chapters";
-                    });
-                  },
-                ),
-        ),
-        bottomNavigationBar: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          child: Row(
-            mainAxisAlignment: (_selectMode)
-                ? MainAxisAlignment.spaceAround
-                : MainAxisAlignment.spaceBetween,
-            children: [
-              if (!_selectMode) ...[
-                (!(bookNChap.book == Book.gen && bookNChap.chapter == 1))
-                    ? IconButton(
-                        icon: const Icon(Icons.navigate_before),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            _animateRoute(
-                                (bookNChap.chapter == 1)
-                                    ? BookNChap(
-                                        Book.values.elementAt(Book.values
-                                                .indexOf(bookNChap.book) -
-                                            1),
-                                        Book.values
-                                            .elementAt(Book.values
-                                                    .indexOf(bookNChap.book) -
-                                                1)
-                                            .chapters)
-                                    : BookNChap(
-                                        bookNChap.book, bookNChap.chapter - 1),
-                                true),
-                          );
-                        },
-                      )
-                    : IconButton(
-                        onPressed: () {},
-                        icon: const SizedBox(
-                          height: 0,
-                        ),
-                      ),
-                (!(bookNChap.book == Book.rev &&
-                        bookNChap.chapter == Book.rev.chapters))
-                    ? IconButton(
-                        icon: const Icon(Icons.navigate_next),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.push(
+          bottomNavigationBar: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            child: Row(
+              mainAxisAlignment: (_selectMode)
+                  ? MainAxisAlignment.spaceAround
+                  : MainAxisAlignment.spaceBetween,
+              children: [
+                if (!_selectMode) ...[
+                  (!(bookNChap.book == Book.gen && bookNChap.chapter == 1))
+                      ? IconButton(
+                          icon: const Icon(Icons.navigate_before),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(
                               context,
                               _animateRoute(
-                                  (bookNChap.chapter == bookNChap.book.chapters)
+                                  (bookNChap.chapter == 1)
                                       ? BookNChap(
                                           Book.values.elementAt(Book.values
-                                                  .indexOf(bookNChap.book) +
+                                                  .indexOf(bookNChap.book) -
                                               1),
-                                          1)
-                                      : BookNChap(bookNChap.book,
-                                          bookNChap.chapter + 1),
-                                  false));
-                        },
-                      )
-                    : IconButton(
-                        onPressed: () {},
-                        icon: const SizedBox(
-                          height: 0,
+                                          Book.values
+                                              .elementAt(Book.values
+                                                      .indexOf(bookNChap.book) -
+                                                  1)
+                                              .chapters)
+                                      : BookNChap(
+                                          bookNChap.book, bookNChap.chapter - 1),
+                                  true),
+                            );
+                          },
+                        )
+                      : IconButton(
+                          onPressed: () {},
+                          icon: const SizedBox(
+                            height: 0,
+                          ),
                         ),
-                      )
-              ] else ...[
-                IconButton(
-                  icon: const Icon(
-                    Icons.copy,
+                  (!(bookNChap.book == Book.rev &&
+                          bookNChap.chapter == Book.rev.chapters))
+                      ? IconButton(
+                          icon: const Icon(Icons.navigate_next),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                _animateRoute(
+                                    (bookNChap.chapter == bookNChap.book.chapters)
+                                        ? BookNChap(
+                                            Book.values.elementAt(Book.values
+                                                    .indexOf(bookNChap.book) +
+                                                1),
+                                            1)
+                                        : BookNChap(bookNChap.book,
+                                            bookNChap.chapter + 1),
+                                    false));
+                          },
+                        )
+                      : IconButton(
+                          onPressed: () {},
+                          icon: const SizedBox(
+                            height: 0,
+                          ),
+                        )
+                ] else ...[
+                  IconButton(
+                    icon: const Icon(
+                      Icons.copy,
+                    ),
+                    onPressed: () async {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("클립보드에 복사되었습니다."),
+                        duration: Duration(milliseconds: 500),
+                      ));
+                      await Clipboard.setData(ClipboardData(
+                          text: _verses
+                              .where((element) => element["selected"])
+                              .map((e) =>
+                                  "${e["ZVERSE_NUMBER"]} ${e["ZVERSE_CONTENT"]}")
+                              .join("")));
+                    },
                   ),
-                  onPressed: () async {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("클립보드에 복사되었습니다."),
-                      duration: Duration(milliseconds: 500),
-                    ));
-                    await Clipboard.setData(ClipboardData(
-                        text: _verses
-                            .where((element) => element["selected"])
-                            .map((e) =>
-                                "${e["ZVERSE_NUMBER"]} ${e["ZVERSE_CONTENT"]}")
-                            .join("")));
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.save_alt),
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return _bottomSheet();
-                      },
-                    );
-                  },
-                )
-              ]
-            ],
-          ),
-        ),
-        body: ListView(
-          children: [
-            ...List.generate(
-              _verses.length,
-              (index) => ListTile(
-                key: _keys[index],
-                onLongPress: () {
-                  if (!_selectMode) {
-                    setState(
-                      () {
-                        _selectMode = true;
-                        _verses[index].update("selected", (_) => true);
-                      },
-                    );
-                  }
-                },
-                onTap: () {
-                  if (_selectMode) {
-                    setState(
-                      () {
-                        _verses[index].update(
-                          "selected",
-                          (value) =>
-                              !((_verses[index]["selected"] ?? false) as bool),
-                        );
-                      },
-                    );
-                  }
-                },
-                leading: Text(
-                  _verses[index]["ZVERSE_NUMBER"].toString(),
-                  // content[index]["verse"].toString(),
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColor, fontSize: 16),
-                ),
-                title: Text(parseVerseData(
-                    _verses[index]["ZVERSE_CONTENT"].toString())),
-                // title: Text(content[index]["content"].toString()),
-                selected: (_verses[index]["selected"] ?? false) as bool,
-                selectedColor: isLightMode ? Colors.black : Colors.white,
-                selectedTileColor:
-                    isLightMode ? Colors.lightGreen.shade100 : dMainColor[500],
-              ),
-            ),
-          ],
+                  IconButton(
+                    icon: const Icon(Icons.save_alt),
+                    onPressed: () {
                       if (_verses.where((element) => element["selected"]).isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -284,6 +228,64 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
                         );
                         return;
                       }
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return _bottomSheet();
+                        },
+                      );
+                    },
+                  )
+                ]
+              ],
+            ),
+          ),
+          body: ListView(
+            children: [
+              ...List.generate(
+                _verses.length,
+                (index) => ListTile(
+                  key: _keys[index],
+                  onLongPress: () {
+                    if (!_selectMode) {
+                      setState(
+                        () {
+                          _selectMode = true;
+                          _verses[index].update("selected", (_) => true);
+                        },
+                      );
+                    }
+                  },
+                  onTap: () {
+                    if (_selectMode) {
+                      setState(
+                        () {
+                          _verses[index].update(
+                            "selected",
+                            (value) =>
+                                !((_verses[index]["selected"] ?? false) as bool),
+                          );
+                        },
+                      );
+                    }
+                  },
+                  leading: Text(
+                    _verses[index]["ZVERSE_NUMBER"].toString(),
+                    // content[index]["verse"].toString(),
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 16),
+                  ),
+                  title: Text(parseVerseData(
+                      _verses[index]["ZVERSE_CONTENT"].toString())),
+                  // title: Text(content[index]["content"].toString()),
+                  selected: (_verses[index]["selected"] ?? false) as bool,
+                  selectedColor: isLightMode ? Colors.black : Colors.white,
+                  selectedTileColor:
+                      isLightMode ? Colors.lightGreen.shade100 : dMainColor[500],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

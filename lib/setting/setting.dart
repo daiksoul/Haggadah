@@ -14,243 +14,245 @@ class SettingsState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("설정"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("설정"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 40,
-                  child: Text(
-                    '시스템',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+        body: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 40,
+                    child: Text(
+                      '시스템',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('테마'),
-                    Consumer<AppSettingState>(
-                      builder: (_, setting, __) => Row(
-                        children: [
-                          Column(
-                            children: [
-                              const Text('시스템'),
-                              Radio<ThemeMode>(
-                                groupValue: setting.themeMode,
-                                value: ThemeMode.system,
-                                onChanged: (v) {
-                                  setting.themeMode = v ?? setting.themeMode;
-                                },
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              const Text('아침'),
-                              Radio<ThemeMode>(
-                                groupValue: setting.themeMode,
-                                value: ThemeMode.light,
-                                onChanged: (v) {
-                                  setting.themeMode = v ?? setting.themeMode;
-                                },
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              const Text('저녁'),
-                              Radio<ThemeMode>(
-                                groupValue: setting.themeMode,
-                                value: ThemeMode.dark,
-                                onChanged: (v) {
-                                  setting.themeMode = v ?? setting.themeMode;
-                                },
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-          ...lineDivider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 40,
-                  child: Text(
-                    '말씀 듣기',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                  child: Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('음성 속도'),
+                      const Text('테마'),
                       Consumer<AppSettingState>(
-                        builder: (_, state, __) {
-                          return SizedBox(
-                            width: 150,
-                            child: Slider(
-                              value: state.speechRate,
-                              onChanged: (val) {
-                                state.speechRate = val;
-                              },
-                              min: 0,
-                              max: 2,
-                              divisions: 20,
-                              label: '${state.speechRate}',
-                              inactiveColor: Colors.grey,
+                        builder: (_, setting, __) => Row(
+                          children: [
+                            Column(
+                              children: [
+                                const Text('시스템'),
+                                Radio<ThemeMode>(
+                                  groupValue: setting.themeMode,
+                                  value: ThemeMode.system,
+                                  onChanged: (v) {
+                                    setting.themeMode = v ?? setting.themeMode;
+                                  },
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('반복'),
-                      Consumer<AppSettingState>(
-                        builder: (_, setting, __) => DropdownMenu<RepeatOption>(
-                          initialSelection: setting.repeatOption,
-                          dropdownMenuEntries: const [
-                            DropdownMenuEntry(
-                              value: RepeatOption.noRepeat,
-                              label: '반복 없음',
+                            Column(
+                              children: [
+                                const Text('아침'),
+                                Radio<ThemeMode>(
+                                  groupValue: setting.themeMode,
+                                  value: ThemeMode.light,
+                                  onChanged: (v) {
+                                    setting.themeMode = v ?? setting.themeMode;
+                                  },
+                                ),
+                              ],
                             ),
-                            DropdownMenuEntry(
-                              value: RepeatOption.repeatAll,
-                              label: '전체 반복',
-                            ),
-                            DropdownMenuEntry(
-                              value: RepeatOption.repeatOne,
-                              label: '한절 반복',
-                            ),
+                            Column(
+                              children: [
+                                const Text('저녁'),
+                                Radio<ThemeMode>(
+                                  groupValue: setting.themeMode,
+                                  value: ThemeMode.dark,
+                                  onChanged: (v) {
+                                    setting.themeMode = v ?? setting.themeMode;
+                                  },
+                                ),
+                              ],
+                            )
                           ],
-                          onSelected: (v) {
-                            setting.repeatOption = v ?? setting.repeatOption;
-                          },
-                          trailingIcon: const Icon(
-                            Icons.arrow_drop_down,
-                            size: 20,
-                          ),
-                          selectedTrailingIcon: const Icon(
-                            Icons.arrow_drop_up,
-                            size: 20,
-                          ),
-                          width: 140,
-                          enableSearch: false,
-                          inputDecorationTheme: InputDecorationTheme(
-                            labelStyle: const TextStyle(fontSize: 12),
-                            constraints: BoxConstraints.tight(
-                              const Size.fromHeight(40),
-                            ),
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 15),
-                          ),
-                          menuStyle: const MenuStyle(
-                            visualDensity: VisualDensity(
-                              horizontal: 0,
-                              vertical: -1,
-                            ),
-                            padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                            elevation: WidgetStatePropertyAll(1),
-                          ),
-                          textStyle: const TextStyle(fontSize: 14),
                         ),
-                      ),
+                      )
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          ...lineDivider(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 40,
-                  child: Text(
-                    '말씀 보관함',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('구절 펼치기'),
-                      Consumer<AppSettingState>(
-                        builder: (_, state, __) {
-                          return Switch(
-                            value: state.expandByDefault,
-                            onChanged: (v) {
-                              state.expandByDefault = v;
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ...lineDivider(),
-          const SizedBox(
-            height: 40,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                '미리보기',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                ],
               ),
             ),
-          ),
-          Transform.scale(
-            alignment: Alignment.topCenter,
-            scale: 0.75,
-            child: Column(
-              key: UniqueKey(),
-              children: [
-                previewVerse(isLightMode, 0, '창 1 : 1', '태초에 하나님이 천지를 창조하시니라'),
-                previewVerse(
-                    isLightMode, 1, '시 23 : 1', '여호와는 나의 목자시니 내게 부족함이 없으리로다'),
-                previewVerse(isLightMode, 2, '전 12 : 1',
-                    '너는 청년의 때에 너의 창조주를 기억하라 곧 곤고한 날이 이르기 전에, 나는 아무 낙이 없다고 할 해들이 가깝기 전에'),
-              ],
+            ...lineDivider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 40,
+                    child: Text(
+                      '말씀 듣기',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('음성 속도'),
+                        Consumer<AppSettingState>(
+                          builder: (_, state, __) {
+                            return SizedBox(
+                              width: 150,
+                              child: Slider(
+                                value: state.speechRate,
+                                onChanged: (val) {
+                                  state.speechRate = val;
+                                },
+                                min: 0,
+                                max: 2,
+                                divisions: 20,
+                                label: '${state.speechRate}',
+                                inactiveColor: Colors.grey,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('반복'),
+                        Consumer<AppSettingState>(
+                          builder: (_, setting, __) => DropdownMenu<RepeatOption>(
+                            initialSelection: setting.repeatOption,
+                            dropdownMenuEntries: const [
+                              DropdownMenuEntry(
+                                value: RepeatOption.noRepeat,
+                                label: '반복 없음',
+                              ),
+                              DropdownMenuEntry(
+                                value: RepeatOption.repeatAll,
+                                label: '전체 반복',
+                              ),
+                              DropdownMenuEntry(
+                                value: RepeatOption.repeatOne,
+                                label: '한절 반복',
+                              ),
+                            ],
+                            onSelected: (v) {
+                              setting.repeatOption = v ?? setting.repeatOption;
+                            },
+                            trailingIcon: const Icon(
+                              Icons.arrow_drop_down,
+                              size: 20,
+                            ),
+                            selectedTrailingIcon: const Icon(
+                              Icons.arrow_drop_up,
+                              size: 20,
+                            ),
+                            width: 140,
+                            enableSearch: false,
+                            inputDecorationTheme: InputDecorationTheme(
+                              labelStyle: const TextStyle(fontSize: 12),
+                              constraints: BoxConstraints.tight(
+                                const Size.fromHeight(40),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                            ),
+                            menuStyle: const MenuStyle(
+                              visualDensity: VisualDensity(
+                                horizontal: 0,
+                                vertical: -1,
+                              ),
+                              padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                              elevation: WidgetStatePropertyAll(1),
+                            ),
+                            textStyle: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            ...lineDivider(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 40,
+                    child: Text(
+                      '말씀 보관함',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('구절 펼치기'),
+                        Consumer<AppSettingState>(
+                          builder: (_, state, __) {
+                            return Switch(
+                              value: state.expandByDefault,
+                              onChanged: (v) {
+                                state.expandByDefault = v;
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...lineDivider(),
+            const SizedBox(
+              height: 40,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  '미리보기',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Transform.scale(
+              alignment: Alignment.topCenter,
+              scale: 0.75,
+              child: Column(
+                key: UniqueKey(),
+                children: [
+                  previewVerse(isLightMode, 0, '창 1 : 1', '태초에 하나님이 천지를 창조하시니라'),
+                  previewVerse(
+                      isLightMode, 1, '시 23 : 1', '여호와는 나의 목자시니 내게 부족함이 없으리로다'),
+                  previewVerse(isLightMode, 2, '전 12 : 1',
+                      '너는 청년의 때에 너의 창조주를 기억하라 곧 곤고한 날이 이르기 전에, 나는 아무 낙이 없다고 할 해들이 가깝기 전에'),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

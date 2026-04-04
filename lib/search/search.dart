@@ -24,112 +24,114 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => SearchManager(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('검색'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('검색'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
-        ),
-        body: Consumer<SearchManager>(builder: (context, state, _) {
-          return CustomScrollView(
-            slivers: [
-              const SliverResizingHeader(
-                maxExtentPrototype: SearchHeader(),
-                minExtentPrototype: SearchHeader(),
-                child: SearchHeader(),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: ExpansionTile(
-                    dense: true,
-                    maintainState: true,
-                    title: Text('검색 범위'),
-                    children: [
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            toggler(
-                              text: '전체',
-                              onChange: state.toggleAll,
-                              value: state.isAllSelected(),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
+          body: Consumer<SearchManager>(builder: (context, state, _) {
+            return CustomScrollView(
+              slivers: [
+                const SliverResizingHeader(
+                  maxExtentPrototype: SearchHeader(),
+                  minExtentPrototype: SearchHeader(),
+                  child: SearchHeader(),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: ExpansionTile(
+                      dense: true,
+                      maintainState: true,
+                      title: Text('검색 범위'),
+                      children: [
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              toggler(
+                                text: '전체',
+                                onChange: state.toggleAll,
+                                value: state.isAllSelected(),
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        toggler(
+                                          text: '구약 전체',
+                                          onChange: state.toggleOldT,
+                                          value: state.isOldTAllSelected(),
+                                        ),
+                                        ...List.generate(
+                                          39,
+                                          (idx) => toggler(
+                                            text: Book.values[idx].kor,
+                                            onChange: () => state
+                                                .toggleBook(Book.values[idx]),
+                                            value: state
+                                                .bookSelected(Book.values[idx]),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       toggler(
-                                        text: '구약 전체',
-                                        onChange: state.toggleOldT,
-                                        value: state.isOldTAllSelected(),
+                                        text: '신약 전체',
+                                        onChange: state.toggleNewT,
+                                        value: state.isNewTAllSelected(),
                                       ),
                                       ...List.generate(
-                                        39,
+                                        27,
                                         (idx) => toggler(
-                                          text: Book.values[idx].kor,
+                                          text: Book.values[idx + 39].kor,
                                           onChange: () => state
-                                              .toggleBook(Book.values[idx]),
-                                          value: state
-                                              .bookSelected(Book.values[idx]),
+                                              .toggleBook(Book.values[idx + 39]),
+                                          value: state.bookSelected(
+                                              Book.values[idx + 39]),
                                         ),
                                       )
                                     ],
-                                  ),
-                                ),
-                                Expanded(
-                                    child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    toggler(
-                                      text: '신약 전체',
-                                      onChange: state.toggleNewT,
-                                      value: state.isNewTAllSelected(),
-                                    ),
-                                    ...List.generate(
-                                      27,
-                                      (idx) => toggler(
-                                        text: Book.values[idx + 39].kor,
-                                        onChange: () => state
-                                            .toggleBook(Book.values[idx + 39]),
-                                        value: state.bookSelected(
-                                            Book.values[idx + 39]),
-                                      ),
-                                    )
-                                  ],
-                                ))
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                                  ))
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SliverResizingHeader(
-                maxExtentPrototype: resultText(state),
-                minExtentPrototype: resultText(state),
-                child: resultText(state),
-              ),
-              SliverList.builder(
-                key: _results,
-                itemCount: state.queryResult.length,
-                itemBuilder: (_, idx) => QueryVerse(
-                  data: state.queryResult[idx],
-                  keyword: state.keywordController.text,
+                SliverResizingHeader(
+                  maxExtentPrototype: resultText(state),
+                  minExtentPrototype: resultText(state),
+                  child: resultText(state),
                 ),
-              )
-            ],
-          );
-        }),
+                SliverList.builder(
+                  key: _results,
+                  itemCount: state.queryResult.length,
+                  itemBuilder: (_, idx) => QueryVerse(
+                    data: state.queryResult[idx],
+                    keyword: state.keywordController.text,
+                  ),
+                )
+              ],
+            );
+          }),
+        ),
       ),
     );
   }

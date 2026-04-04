@@ -19,134 +19,136 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          children: <Widget>[
-            const SizedBox(height: 80.0),
-            Column(
-              children: <Widget>[
-                Consumer<ApplicationState>(builder: (context, state, _) {
-                  return (state.isSignedIn)
-                      ? Container(
-                          width: 100,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipOval(
-                            child: Image.network(
-                              FirebaseAuth.instance.currentUser!.photoURL ??
-                                  "wee",
-                              fit: BoxFit.fill,
-                            ),
-                          ))
-                      : const Icon(
-                          Icons.person,
-                          size: 100,
-                        );
-                }),
-                const SizedBox(height: 16.0),
-                Consumer<ApplicationState>(
-                  builder: (context, state, _) {
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            children: <Widget>[
+              const SizedBox(height: 80.0),
+              Column(
+                children: <Widget>[
+                  Consumer<ApplicationState>(builder: (context, state, _) {
                     return (state.isSignedIn)
-                        ? Text(
-                            FirebaseAuth.instance.currentUser!.displayName ??
-                                "Nope",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                        ? Container(
+                            width: 100,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
                             ),
-                          )
-                        : const Text("로그인");
-                  },
-                )
-              ],
-            ),
-            const SizedBox(height: 120.0),
-            Consumer2<ApplicationState, AppStorageState>(
-              builder: (context, state, store, _) => (!state.isSignedIn)
-                  ? IconLoginButton(
-                      style: ButtonStyle(
+                            child: ClipOval(
+                              child: Image.network(
+                                FirebaseAuth.instance.currentUser!.photoURL ??
+                                    "wee",
+                                fit: BoxFit.fill,
+                              ),
+                            ))
+                        : const Icon(
+                            Icons.person,
+                            size: 100,
+                          );
+                  }),
+                  const SizedBox(height: 16.0),
+                  Consumer<ApplicationState>(
+                    builder: (context, state, _) {
+                      return (state.isSignedIn)
+                          ? Text(
+                              FirebaseAuth.instance.currentUser!.displayName ??
+                                  "Nope",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            )
+                          : const Text("로그인");
+                    },
+                  )
+                ],
+              ),
+              const SizedBox(height: 120.0),
+              Consumer2<ApplicationState, AppStorageState>(
+                builder: (context, state, store, _) => (!state.isSignedIn)
+                    ? IconLoginButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.green.shade200),
+                            minimumSize:
+                                const WidgetStatePropertyAll(Size.fromHeight(50)),
+                            padding:
+                                const WidgetStatePropertyAll(EdgeInsets.zero)),
+                        text: "GOOGLE",
+                        icon: const Icon(
+                          Icons.g_mobiledata_rounded,
+                          size: 40,
+                        ),
+                        onPressed: () async {
+                          UserCredential ud = await signInWithGoogle();
+                          if (ud.user != null) {
+                            state.signIn();
+                            final user = FirebaseAuth.instance.currentUser!;
+                            final collection =
+                                FirebaseFirestore.instance.collection("users");
+                            collection
+                                .where("uid", isEqualTo: user.uid)
+                                .get()
+                                .then((value) {
+                              if (value.docs.isEmpty) {
+                                collection.doc(user.uid).set({
+                                  "uid": user.uid,
+                                  "name": user.displayName,
+                                  "email": user.email,
+                                });
+                              }
+                            });
+                            readAllLocalCollection().then((list) {
+                              for (final val in list) {
+                                writeRemoteCollection(val);
+                              }
+                            });
+                            readAllRemoteCollection().then((list) {
+                              // print(list.length);
+                              for (final val in list) {
+                                // print(val.title);
+                                store.add(context, val);
+                              }
+                            });
+                            setState(() {});
+                          }
+                        },
+                      )
+                    : IconLoginButton(
+                        style: ButtonStyle(
                           backgroundColor:
-                              WidgetStatePropertyAll(Colors.green.shade200),
+                              WidgetStatePropertyAll(Colors.red.shade200),
                           minimumSize:
                               const WidgetStatePropertyAll(Size.fromHeight(50)),
-                          padding:
-                              const WidgetStatePropertyAll(EdgeInsets.zero)),
-                      text: "GOOGLE",
-                      icon: const Icon(
-                        Icons.g_mobiledata_rounded,
-                        size: 40,
-                      ),
-                      onPressed: () async {
-                        UserCredential ud = await signInWithGoogle();
-                        if (ud.user != null) {
-                          state.signIn();
-                          final user = FirebaseAuth.instance.currentUser!;
-                          final collection =
-                              FirebaseFirestore.instance.collection("users");
-                          collection
-                              .where("uid", isEqualTo: user.uid)
-                              .get()
-                              .then((value) {
-                            if (value.docs.isEmpty) {
-                              collection.doc(user.uid).set({
-                                "uid": user.uid,
-                                "name": user.displayName,
-                                "email": user.email,
-                              });
-                            }
-                          });
-                          readAllLocalCollection().then((list) {
-                            for (final val in list) {
-                              writeRemoteCollection(val);
-                            }
-                          });
-                          readAllRemoteCollection().then((list) {
-                            // print(list.length);
-                            for (final val in list) {
-                              // print(val.title);
-                              store.add(context, val);
-                            }
-                          });
+                          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                        ),
+                        text: "LOGOUT",
+                        icon: const Icon(
+                          Icons.logout,
+                          size: 40,
+                        ),
+                        onPressed: () {
+                          FirebaseAuth.instance.signOut();
+                          state.signOut();
                           setState(() {});
-                        }
-                      },
-                    )
-                  : IconLoginButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(Colors.red.shade200),
-                        minimumSize:
-                            const WidgetStatePropertyAll(Size.fromHeight(50)),
-                        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                        },
                       ),
-                      text: "LOGOUT",
-                      icon: const Icon(
-                        Icons.logout,
-                        size: 40,
-                      ),
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        state.signOut();
-                        setState(() {});
-                      },
-                    ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );

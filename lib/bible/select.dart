@@ -25,7 +25,8 @@ class BookSelectPageState extends State<BookSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(
@@ -162,6 +163,7 @@ class BookSelectPageState extends State<BookSelectPage> {
           ),
         ],
       ),
+    )
     );
   }
 }
@@ -180,60 +182,62 @@ class ChapterSelectState extends State<ChapterSelectPage> {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
     currBook =
         (ModalRoute.of(context)?.settings.arguments as Book?) ?? Book.gen;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(currBook.kor),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: MediaQuery.withNoTextScaling(
-        child: GridView(
-          padding: const EdgeInsets.all(5),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 80,
-            mainAxisSpacing: 5,
-            crossAxisSpacing: 5,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(currBook.kor),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          children: [
-            for (var t = 1; t <= currBook.chapters; t++)
-              ElevatedButton(
-                style: ButtonStyle(
-                  padding: const WidgetStatePropertyAll(EdgeInsets.all(0)),
-                  side: WidgetStateProperty.all(BorderSide(
-                      color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
-                      width: 0.5)),
-                  shape: WidgetStateProperty.all(
-                    const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        body: MediaQuery.withNoTextScaling(
+          child: GridView(
+            padding: const EdgeInsets.all(5),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 80,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+            ),
+            children: [
+              for (var t = 1; t <= currBook.chapters; t++)
+                ElevatedButton(
+                  style: ButtonStyle(
+                    padding: const WidgetStatePropertyAll(EdgeInsets.all(0)),
+                    side: WidgetStateProperty.all(BorderSide(
+                        color: isLightMode ? odEvColor[300]! : dOdEvColor[300]!,
+                        width: 0.5)),
+                    shape: WidgetStateProperty.all(
+                      const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
                     ),
+                    elevation: const WidgetStatePropertyAll(0),
+                    backgroundColor: WidgetStatePropertyAll((isLightMode
+                        ? odEvColor
+                        : dOdEvColor)[t.isOdd ? 100 : 200]),
+                    foregroundColor: t.isOdd
+                        ? theme.elevatedButtonTheme.style?.foregroundColor
+                        : WidgetStatePropertyAll(Colors.green.shade200),
                   ),
-                  elevation: const WidgetStatePropertyAll(0),
-                  backgroundColor: WidgetStatePropertyAll((isLightMode
-                      ? odEvColor
-                      : dOdEvColor)[t.isOdd ? 100 : 200]),
-                  foregroundColor: t.isOdd
-                      ? theme.elevatedButtonTheme.style?.foregroundColor
-                      : WidgetStatePropertyAll(Colors.green.shade200),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      "/verses",
+                      arguments: BookNChap(currBook, t),
+                    );
+                  },
+                  child: Text(
+                    t.toString(),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: (t.toString().length > 2) ? 16 : 20),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    "/verses",
-                    arguments: BookNChap(currBook, t),
-                  );
-                },
-                child: Text(
-                  t.toString(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: (t.toString().length > 2) ? 16 : 20),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
