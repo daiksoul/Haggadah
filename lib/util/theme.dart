@@ -17,7 +17,7 @@ ThemeData theme = ThemeData(
     elevation: 1,
   ),
   textTheme: lightTextTheme,
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
       side: BorderSide(color: odEvColor[300]!),
@@ -142,13 +142,13 @@ ThemeData darkTheme = ThemeData(
     focusColor: Colors.black,
     elevation: 1,
   ),
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
       side: BorderSide(color: dOdEvColor[300]!),
     ),
   ),
-  dialogTheme: DialogTheme(),
+  dialogTheme: DialogThemeData(),
   inputDecorationTheme: InputDecorationTheme(
     labelStyle: TextStyle(
       color: dMainColor,
