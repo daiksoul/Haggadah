@@ -1,4 +1,4 @@
-enum Book {
+  enum Book {
   gen(kor: "창세기", korAb: "창", engAb: "gen", newT: false, chapters: 50),
   exo(kor: "출애굽기", korAb: "출", engAb: "exo", newT: false, chapters: 40),
   lev(kor: "레위기", korAb: "레", engAb: "lev", newT: false, chapters: 27),

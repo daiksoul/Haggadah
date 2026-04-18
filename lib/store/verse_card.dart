@@ -28,6 +28,9 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
   final List<List> _verseList = [];
 
   late List<bool> _expansion;
+  // bool _cExpaneded = false;
+
+  // final List<ExpansibleController> _expControllers = [];
 
   final List<String> _colors = [
     'fbf719',
@@ -68,6 +71,8 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
         _verseList.addAll(
           List.generate(_collect.verses.length, (index) => []),
         );
+
+        // _expControllers.addAll(List.generate(_collect.verses.length, (i) => ExpansibleController()));
 
         await Future.wait([
           for (int j = 0; j < _collect.verses.length; j++)
@@ -207,12 +212,19 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
               //   icon: Icon(
               //       _cExpaneded ? Icons.close_fullscreen : Icons.open_in_full),
               //   onPressed: () {
-        
+              //
               //     setState(() {
               //       _cExpaneded = !_cExpaneded;
               //       for (var i = 0; i < _verseList.length; i++) {
               //         _expansion[i] = _cExpaneded;
               //       }
+              //       Future.delayed(Duration.zero, () async {
+              //         for(final t in _expControllers){
+              //           _cExpaneded ? t.collapse() : t.expand();
+              //           await Future.delayed(const Duration(milliseconds: 10));
+              //         }
+              //       });
+              //
               //     });
               //     // _listkey.currentState?.setState(() {});
               //   },
@@ -311,6 +323,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                     key: ValueKey(i),
                     initiallyExpanded: _expansion[i],
                     controlAffinity: ListTileControlAffinity.leading,
+                    // controller: _expControllers[i],
                     expandedAlignment: Alignment.centerLeft,
                     leading: SizedBox(
                       width: 30,

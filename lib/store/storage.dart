@@ -9,6 +9,10 @@ import 'package:haggah/data/resolve.dart';
 import 'package:haggah/util/button_widgets.dart';
 import 'package:haggah/util/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:flutter/foundation.dart';
+
 
 class StoragePage extends StatefulWidget {
   const StoragePage({super.key});
@@ -18,6 +22,28 @@ class StoragePage extends StatefulWidget {
 }
 
 class StorageState extends State<StoragePage> {
+  String? starredUid;
+  bool get isAndroid => defaultTargetPlatform == TargetPlatform.android;
+  SharedPreferencesAsync? pref;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () async {
+      final option = isAndroid ? const SharedPreferencesAsyncAndroidOptions(
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+            fileName: "com.example.haggah"
+        )
+      ) : const SharedPreferencesOptions();
+
+      pref = SharedPreferencesAsync(options: option);
+      starredUid = await pref?.getString("storageName");
+
+      setState(() {});
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -184,6 +210,7 @@ class StorageState extends State<StoragePage> {
                         context,
                         state.collection[index],
                         index.isOdd,
+                        starredUid == state.collection[index].uid,
                       ),
                     )
                   ],
@@ -195,109 +222,119 @@ class StorageState extends State<StoragePage> {
       ),
     );
   }
-}
 
-Widget genCard(BuildContext context, VerseCollection collection, bool od) {
-  final isLightMode = Theme.of(context).brightness == Brightness.light;
-  return InkWell(
-    onTap: () {
-      Navigator.pushNamed(context, "/card", arguments: collection);
-    },
-    child: Card(
-      color: (isLightMode ? odEvColor : dOdEvColor)[od ? 100 : 200],
-      shadowColor: Colors.transparent,
-      child: AspectRatio(
-        aspectRatio: 3 / 4,
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Stack(
-            children: [
-              Positioned(
-                right: 0,
-                left: 0,
-                child: Column(
-                  children: [
-                    Text(
-                      collection.title,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    Divider(
-                      height: 10,
-                      thickness: 1,
-                      color: isLightMode ? odEvColor[300] : dOdEvColor[300],
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "${collection.verses.getRange(0, (collection.verses.length > 3) ? 3 : collection.verses.length).map((e) => e.getShortName()).join("\n")}${(collection.verses.length > 3) ? "\n..." : ""}",
+  Widget genCard(BuildContext context, VerseCollection collection, bool od, [bool starred = false]) {
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, "/card", arguments: collection);
+      },
+      child: Card(
+        color: (isLightMode ? odEvColor : dOdEvColor)[od ? 100 : 200],
+        shadowColor: Colors.transparent,
+        child: AspectRatio(
+          aspectRatio: 3 / 4,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: 0,
+                  left: 0,
+                  child: Column(
+                    children: [
+                      Text(
+                        collection.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                    ),
-                  ],
+                      Divider(
+                        height: 10,
+                        thickness: 1,
+                        color: isLightMode ? odEvColor[300] : dOdEvColor[300],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "${collection.verses.getRange(0, (collection.verses.length > 3) ? 3 : collection.verses.length).map((e) => e.getShortName()).join("\n")}${(collection.verses.length > 3) ? "\n..." : ""}",
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Positioned(
-                right: 0,
-                left: 0,
-                bottom: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    labeledIconButton(
-                      icon: const Icon(Icons.share, size: 20),
-                      text: const Text("공유"),
-                      onPressed: () async {
-                        final dat = collection.toJson();
-                        dat.remove("uid");
-                        final doc = await FirebaseFirestore.instance
-                            .collection("share_collection")
-                            .add(dat);
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: const Text("공유하기"),
-                                  content: SelectableText(doc.id),
-                                  actions: [
-                                    TextButton(
-                                      style: Theme.of(context)
-                                          .textButtonTheme
-                                          .style,
-                                      child: const Text("복사"),
-                                      onPressed: () {
-                                        Clipboard.setData(
-                                            ClipboardData(text: doc.id));
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text("클립보드에 복사되었습니다."),
-                                          duration: Duration(milliseconds: 500),
-                                        ));
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text("확인"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    )
-                                  ],
-                                ));
-                      },
-                    ),
-                    // labeledIconButton(
-                    //   icon: const Icon(Icons.edit),
-                    //   text: const Text("수정"),
-                    //   onPressed: () {},
-                    // ),
-                    Consumer<AppStorageState>(
-                      builder: (context, state, _) {
-                        return labeledIconButton(
-                          icon: const Icon(Icons.delete, size: 20),
-                          text: const Text("삭제"),
-                          onPressed: () {
-                            showDialog(context: context, builder: (context) => AlertDialog(
+                Positioned(
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      labeledIconButton(
+                        icon: Icon( starred ? Icons.star : Icons.star_border, size: 20),
+                        text: const Text("별표"),
+                        onPressed: () async {
+                          await pref?.setString("storageName", collection.uid);
+                          await pref?.setInt("storageLength", collection.verses.length);
+                          setState(() {
+                            starredUid = collection.uid;
+                          });
+                        },
+                      ),
+                      labeledIconButton(
+                        icon: const Icon(Icons.share, size: 20),
+                        text: const Text("공유"),
+                        onPressed: () async {
+                          final dat = collection.toJson();
+                          dat.remove("uid");
+                          final doc = await FirebaseFirestore.instance
+                              .collection("share_collection")
+                              .add(dat);
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("공유하기"),
+                                content: SelectableText(doc.id),
+                                actions: [
+                                  TextButton(
+                                    style: Theme.of(context)
+                                        .textButtonTheme
+                                        .style,
+                                    child: const Text("복사"),
+                                    onPressed: () {
+                                      Clipboard.setData(
+                                          ClipboardData(text: doc.id));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text("클립보드에 복사되었습니다."),
+                                        duration: Duration(milliseconds: 500),
+                                      ));
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text("확인"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              ));
+                        },
+                      ),
+                      // labeledIconButton(
+                      //   icon: const Icon(Icons.edit),
+                      //   text: const Text("수정"),
+                      //   onPressed: () {},
+                      // ),
+                      Consumer<AppStorageState>(
+                        builder: (context, state, _) {
+                          return labeledIconButton(
+                            icon: const Icon(Icons.delete, size: 20),
+                            text: const Text("삭제"),
+                            onPressed: () {
+                              showDialog(context: context, builder: (context) => AlertDialog(
                                 title: const Text("경고"),
                                 content: Text("정말로 보관함 ${collection.title}을/를 삭제하시겠습니까?"),
                                 actions: [
@@ -316,19 +353,20 @@ Widget genCard(BuildContext context, VerseCollection collection, bool od) {
                                   )
                                 ],
                               ));
-                          },
-                        );
-                      },
-                    ),
-                  ],
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 Widget labeledIconButton({

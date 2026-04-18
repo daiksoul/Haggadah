@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appwidget_text">Haggah</string>
+    <string name="add_widget">위젯 추가</string>
+    <string name="app_widget_description">말씀이 항상 보이는 위젯입니다</string>
+    <string name="back_button_description">이전 말씀</string>
+    <string name="next_button_description">다음 말씀</string>
+    <string name="logo_description">하가로고</string>
+    <string name="example_title">B2B</string>
+    <string name="example_address">전도서 12:1</string>
+    <string name="example_content">너는 청년의 때에 너의 창조주를 기억하라 곧 곤고한 날이 이르기 전에 나는 아무 낙이 없다고 할 해들이 가깝기 전에</string>
+</resources>

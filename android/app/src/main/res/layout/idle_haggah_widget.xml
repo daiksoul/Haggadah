@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Android.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foregroundTint="#FFFFFF"
+    android:theme="@style/Theme.Android.AppWidgetContainer">
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:accessibilityLiveRegion="polite"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/back_button_description"
+        android:scaleType="centerInside"
+        android:src="@drawable/baseline_keyboard_arrow_left_24"
+        android:tint="#FFFFFF" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="@string/next_button_description"
+        android:rotation="180"
+        android:scaleType="centerInside"
+        android:src="@drawable/baseline_keyboard_arrow_left_24"
+        android:tint="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/textView1"
+        style="@style/IdleWidgetText.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="0dp"
+        android:text="@string/example_title"
+        android:textAlignment="viewStart" />
+
+    <TextView
+        android:id="@+id/textView2"
+        style="@style/IdleWidgetText.Address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:text="@string/example_address"
+        android:textAlignment="viewStart" />
+
+    <TextView
+        android:id="@+id/textView3"
+        style="@style/IdleWidgetText.Content"
+        android:layout_width="485dp"
+        android:layout_height="175dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/example_content"
+        android:textAlignment="textStart" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:contentDescription="@string/logo_description"
+        android:scaleType="centerInside"
+        android:src="@drawable/hgdh_logo"
+        android:tint="#FFFFFF"
+        tools:src="@drawable/hgdh_logo" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:text="@string/appwidget_text"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
