@@ -190,6 +190,7 @@ class IdleHaggahWidget : AppWidgetProvider() {
             title,
             "${BibleData.shortNames[book]} $chapter : ${BibleData.intArrToString(verses)}",
             contents.joinToString(" ") { it.substring(0,it.length-1) }
+//            contents.joinToString("")
 //            fileNames?.joinToString(" ").toString()
         )
     }

@@ -15,4 +15,28 @@
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+
+    <style name="IdleWidgetTint">
+        <item name="android:tint">#FFFFFF</item>
+    </style>
+
+    <style name="IdleWidgetText" parent="TextAppearance.AppCompat">
+
+    </style>
+
+    <style name="IdleWidgetText.Title">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="IdleWidgetText.Address">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="IdleWidgetText.Content">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>
