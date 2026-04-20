@@ -85,8 +85,12 @@ class SearchManager extends ChangeNotifier {
       searchOption = 'WHERE ZBOOK_INDEX IN($str)';
     }
 
+    var searchStr = _keywordController.text
+        .replaceAll("침례", "세례")
+        .replaceAll("하가", "묵상");
+
     final lst = (await db.rawQuery(
-            "SELECT ZBOOK_INDEX, ZCHAPTER_NUMBER, ZVERSE_NUMBER, ZVERSE_CONTENT FROM ZVERSE JOIN (SELECT ZCHAPTER.Z_PK, ZBOOK_NAME, ZCHAPTER_NUMBER, ZBOOK_INDEX FROM ZBOOK JOIN ZCHAPTER ON (ZBOOK.Z_PK = ZCHAPTER.ZTOBOOK) $searchOption ) AS C ON (ZVERSE.ZTOCHAPTER = C.Z_PK) WHERE ZVERSE_CONTENT LIKE '%${_keywordController.text}%' ORDER BY ZBOOK_INDEX ASC, ZCHAPTER_NUMBER ASC, ZVERSE_NUMBER ASC;"))
+            "SELECT ZBOOK_INDEX, ZCHAPTER_NUMBER, ZVERSE_NUMBER, ZVERSE_CONTENT FROM ZVERSE JOIN (SELECT ZCHAPTER.Z_PK, ZBOOK_NAME, ZCHAPTER_NUMBER, ZBOOK_INDEX FROM ZBOOK JOIN ZCHAPTER ON (ZBOOK.Z_PK = ZCHAPTER.ZTOBOOK) $searchOption ) AS C ON (ZVERSE.ZTOCHAPTER = C.Z_PK) WHERE ZVERSE_CONTENT LIKE '%$searchStr%' ORDER BY ZBOOK_INDEX ASC, ZCHAPTER_NUMBER ASC, ZVERSE_NUMBER ASC;"))
         .map((e) => Map.of(e))
         .toList();
     _queryResult.addAll(lst);

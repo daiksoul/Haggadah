@@ -1,15 +1,22 @@
-String parseVerseData(String data) {
-  return data
-      .replaceAllMapped(
-          RegExp(r'^\[[^\[]*\]|\([^\(]*셀라[^\(]*\)|어떤 사본에는.*'), (_) => '')
-      .trim()
-      .replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
+String parseVerseData(String data, {bool chimrye = false, bool haggah = false}) {
+  if (chimrye) data = data.replaceAll("세례", "침례");
+  if (haggah) {
+    data = data.replaceAll("묵상이", "하가가")
+                .replaceAll("묵상", "하가");
+  }
+    return data
+        .replaceAllMapped(
+        RegExp(r'^\[[^\[]*\]|어떤 사본에는.*'), (_) => '')
+        .trim()
+        .replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
 }
 
-String parseVerseDataMin(String data) {
+String parseVerseDataMin(String data, {bool chimrye = false, bool haggah = false}) {
+  if (chimrye) data = data.replaceAll("세례", "침례");
+  if (haggah) data = data.replaceAll("묵상", "하가");
   return data
       .replaceAllMapped(
-          RegExp(r'^\[[^\[]*\]|\([^\(]*셀라[^\(]*\)|어떤 사본에는.*'), (_) => '')
+          RegExp(r'^\[[^\[]*\]|어떤 사본에는.*'), (_) => '')
       .trim();
 }
 

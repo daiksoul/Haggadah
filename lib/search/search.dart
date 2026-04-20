@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:haggah/bible/dat.dart';
-import 'package:haggah/bible/verse.dart';
 import 'package:haggah/search/search_manager.dart';
+import 'package:haggah/setting/settings_model.dart';
 import 'package:haggah/util/verse_data.dart';
 import 'package:provider/provider.dart';
-
-class Search {
-  Future<List<Map>> search(String query) async {
-    String searchOptions = '';
-    return (await DBManager.database.rawQuery(
-            "SELECT ZBOOK_NAME, ZCHAPTER_NUMBER, ZVERSE_NUMBER, ZVERSE_CONTENT FROM ZVERSE JOIN (SELECT ZCHAPTER.Z_PK, ZBOOK_NAME, ZCHAPTER_NUMBER, ZBOOK_INDEX FROM ZBOOK JOIN ZCHAPTER ON (ZBOOK.Z_PK = ZCHAPTER.ZTOBOOK) $searchOptions ) AS C ON (ZVERSE.ZTOCHAPTER = C.Z_PK) WHERE ZVERSE_CONTENT LIKE '$query' ORDER BY ZBOOK_INDEX ASC, ZCHAPTER_NUMBER ASC, ZVERSE_NUMBER ASC;"))
-        .map((e) => Map.of(e))
-        .toList();
-  }
-}
 
 class SearchPage extends StatelessWidget {
   SearchPage({super.key});
@@ -168,6 +158,7 @@ class SearchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var _sett = Provider.of<AppSettingState>(context, listen: false);
     return Consumer<SearchManager>(
       builder: (context, state, _) => DecoratedBox(
         decoration: BoxDecoration(
@@ -226,7 +217,7 @@ class QueryVerse extends StatelessWidget {
   final String keyword;
 
   TextSpan _generateSpan() {
-    var text = parseVerseData(data["ZVERSE_CONTENT"].toString());
+    var text = parseVerseData(data["ZVERSE_CONTENT"].toString(), chimrye: keyword.contains("침례"), haggah: keyword.contains("하가"));
     final word = parseVerseData(keyword);
 
     if (text.isEmpty) {

@@ -4,10 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/struct.dart';
 import 'package:haggah/data/resolve.dart';
+import 'package:haggah/setting/settings_model.dart';
 import 'package:haggah/store/storage.dart';
 import 'package:haggah/util/theme.dart';
 import 'package:haggah/util/verse_data.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,15 +21,15 @@ class DBManager {
 
   static Future<Database> getDB() async {
     var databasesPath = await getDatabasesPath();
-    var path = join(databasesPath, 'bible/bible.db');
+    var path = p.join(databasesPath, 'bible/bible.db');
     var exists = await databaseExists(path);
 
     if (!exists) {
       try {
-        await Directory(dirname(path)).create(recursive: true);
+        await Directory(p.dirname(path)).create(recursive: true);
       } catch (_) {}
 
-      var data = await rootBundle.load(join('assets', 'bible.sqlite3'));
+      var data = await rootBundle.load(p.join('assets', 'bible.sqlite3'));
       List<int> bytes = data.buffer.asUint8List(
         data.offsetInBytes,
         data.lengthInBytes,
@@ -57,6 +58,7 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
   final List<Map> _verses = [];
   final List<GlobalKey> _keys = [];
   late BookNChap bookNChap;
+  late AppSettingState _sett;
 
   Future<List<Map<String, Object?>>> _getVerses(BookNChap bNC) async {
     return await DBManager.database.rawQuery(
@@ -76,6 +78,7 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _verses.clear();
       bookNChap = ModalRoute.of(this.context)!.settings.arguments as BookNChap;
+      _sett = Provider.of<AppSettingState>(context, listen: false);
       _getVerses(bookNChap).then(
         (map) {
           _verses.addAll(map.map((e) => Map.of(e)));
@@ -278,7 +281,10 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
                         color: Theme.of(context).primaryColor, fontSize: 16),
                   ),
                   title: Text(parseVerseData(
-                      _verses[index]["ZVERSE_CONTENT"].toString())),
+                      _verses[index]["ZVERSE_CONTENT"].toString(),
+                    chimrye: _sett.chimrye,
+                    haggah: _sett.haggah,
+                  )),
                   // title: Text(content[index]["content"].toString()),
                   selected: (_verses[index]["selected"] ?? false) as bool,
                   selectedColor: isLightMode ? Colors.black : Colors.white,

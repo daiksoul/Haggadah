@@ -92,6 +92,60 @@ class SettingsState extends State<SettingsPage> {
             ),
             ...lineDivider(),
             Padding(
+              padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 40,
+                    child: Text(
+                      '말씀 표기',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('"세례"를 "침례"로'),
+                        Consumer<AppSettingState>(
+                          builder: (_, state, __) {
+                            return Switch(
+                              value: state.chimrye,
+                              onChanged: (v) {
+                                state.chimrye = v;
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('"묵상"을 "하가"로'),
+                        Consumer<AppSettingState>(
+                          builder: (_, state, __) {
+                            return Switch(
+                              value: state.haggah,
+                              onChanged: (v) {
+                                state.haggah = v;
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...lineDivider(),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

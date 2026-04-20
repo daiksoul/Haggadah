@@ -24,6 +24,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
   late AppStorageState _stor;
   late ApplicationState _app;
   late TtsState? _tts;
+  late AppSettingState _sett;
 
   final List<List> _verseList = [];
 
@@ -57,6 +58,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
+        _sett = Provider.of<AppSettingState>(context, listen: false);
         _collect =
             ModalRoute.of(context)!.settings.arguments as VerseCollection;
         final dExpansion = Provider.of<AppSettingState>(
@@ -94,6 +96,8 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
       _verseList[index].length,
       (index2) => parseVerseData(
         _verseList[index][index2]["ZVERSE_CONTENT"].toString(),
+        chimrye: _sett.chimrye,
+        haggah: _sett.haggah,
       ),
     ).join("\n");
 
@@ -133,7 +137,10 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
           List.generate(
             _verseList[i].length,
             (j) => parseVerseDataMin(
-                _verseList[i][j]["ZVERSE_CONTENT"].toString()),
+                _verseList[i][j]["ZVERSE_CONTENT"].toString(),
+              chimrye: _sett.chimrye,
+              haggah: _sett.haggah,
+            ),
           ).join('\n'));
     }
     return lst;

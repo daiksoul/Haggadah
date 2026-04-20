@@ -23,12 +23,16 @@ enum RepeatOption {
 
 class AppSettings {
   ThemeMode themeMode;
+  bool chimrye;
+  bool haggah;
   double speechRate;
   RepeatOption repeatOption;
   bool expandByDefault;
 
   AppSettings(
       {required this.themeMode,
+        required this.chimrye,
+        required this.haggah,
       required this.speechRate,
       required this.repeatOption,
       required this.expandByDefault});
@@ -36,6 +40,8 @@ class AppSettings {
   factory AppSettings.defaultSettings() {
     return AppSettings(
         themeMode: ThemeMode.system,
+        chimrye: false,
+        haggah: false,
         speechRate: 1,
         repeatOption: RepeatOption.noRepeat,
         expandByDefault: true);
@@ -43,11 +49,15 @@ class AppSettings {
 
   AppSettings copyWith(
       {ThemeMode? themeMode,
+        bool? chimrye,
+        bool? haggah,
       double? speechRate,
       RepeatOption? repeatOption,
       bool? expandByDefault}) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
+      chimrye: chimrye ?? this.chimrye,
+      haggah: haggah ?? this.haggah,
       speechRate: speechRate ?? this.speechRate,
       repeatOption: repeatOption ?? this.repeatOption,
       expandByDefault: expandByDefault ?? this.expandByDefault,
@@ -56,6 +66,8 @@ class AppSettings {
 
   void copyFrom(AppSettings other) {
     themeMode = other.themeMode;
+    chimrye = other.chimrye;
+    haggah = other.haggah;
     speechRate = other.speechRate;
     repeatOption = other.repeatOption;
     expandByDefault = other.expandByDefault;
@@ -63,6 +75,8 @@ class AppSettings {
 
   Map<String, dynamic> toJson() => {
         'themeMode': themeMode.toJson(),
+        'chimrye': chimrye,
+        'haggah': haggah,
         'speechRate': speechRate,
         'repeatOption': repeatOption.string,
         'expandByDefault': expandByDefault,
@@ -72,6 +86,8 @@ class AppSettings {
     final setting = AppSettings.defaultSettings();
     return setting.copyWith(
       themeMode: SettingThemeMode.fromString(map['themeMode'] as String?),
+      chimrye: map['chimrye'] as bool?,
+      haggah: map['haggah'] as bool?,
       speechRate: (map['speechRate'] as num?)?.toDouble(),
       repeatOption: RepeatOption.fromString(map['repeatOption'] as String?),
       expandByDefault: map['expandByDefault'] as bool?,
@@ -106,6 +122,20 @@ class AppSettingState extends ChangeNotifier {
   ThemeMode get themeMode => _settings.themeMode;
   set themeMode(ThemeMode v) {
     _settings.themeMode = v;
+    notifyListeners();
+    debounceSettings();
+  }
+
+  bool get chimrye => _settings.chimrye;
+  set chimrye(bool v) {
+    _settings.chimrye = v;
+    notifyListeners();
+    debounceSettings();
+  }
+
+  bool get haggah => _settings.haggah;
+  set haggah(bool v) {
+    _settings.haggah = v;
     notifyListeners();
     debounceSettings();
   }
