@@ -10,6 +10,11 @@ ThemeData theme = ThemeData(
   cardColor: odEvColor[100],
   dialogBackgroundColor: Colors.white,
   primaryColor: mainColor,
+  pageTransitionsTheme: const PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: ZoomPageTransitionsBuilder()
+    }
+  ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     extendedTextStyle: TextStyle(color: Colors.white),
     backgroundColor: mainColor[200],
@@ -145,6 +150,11 @@ ThemeData darkTheme = ThemeData(
   primaryColor: dMainColor,
   primaryTextTheme: darkTextTheme,
   textTheme: darkTextTheme,
+  pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: ZoomPageTransitionsBuilder()
+      }
+  ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     extendedTextStyle: TextStyle(color: Colors.black),
     backgroundColor: dMainColor[200],
