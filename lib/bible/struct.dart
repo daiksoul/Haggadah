@@ -60,8 +60,8 @@ class MultiVerse {
 
   /// Returns a short name
   ///
-  /// ex) 창세기 1장 1절, 창세기 1장 2절, 창세기 1장 3절 -> 창세기 1장 1-3절</br>
-  /// 호세아 6장 3절, 호세아 6장 6절 -> 호세아 6장 3,6절
+  /// ex) 창세기 1장 1절, 창세기 1장 2절, 창세기 1장 3절 -> 창 1 : 1-3</br>
+  /// 호세아 6장 3절, 호세아 6장 6절 -> 호 6 : 3,6
   String getShortName() {
     int tmp = verse.first.verse;
     int count = 0;
@@ -113,7 +113,7 @@ class MultiVerse {
       v += "부터 ${numberToText(tmp - 1)}절";
     }
 
-    return "${verse[0].book.kor} ${numberToText(verse[0].chapter)}장 $v 말씀.";
+    return "${verse[0].book.kor} ${numberToText(verse[0].chapter)}${verse[0].book == Book.psa ? '편' : '장'} $v 말씀.";
   }
 
   /// Returns a List of Map containing each [Verse] contents

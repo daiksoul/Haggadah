@@ -108,7 +108,7 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "${bookNChap.book.kor} ${bookNChap.chapter}장",
+            "${bookNChap.book.kor} ${bookNChap.chapter}${bookNChap.book == Book.psa ? '편': '장'}",
             textAlign: TextAlign.center,
           ),
           leading: (_selectMode)

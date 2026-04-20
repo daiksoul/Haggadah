@@ -29,8 +29,8 @@ class VocalTestState extends State<VocalTestPage> {
   String _spoken = "";
   String _buffer = "";
 
-  final _bookFinder = RegExp(r'\S*(?=\s*\d+장)');
-  final _chapFinder = RegExp(r'\d+(?=장)');
+  final _bookFinder = RegExp(r'\S*(?=\s*\d+[장편])');
+  final _chapFinder = RegExp(r'\d+(?=[장편])');
   final _mvrsFinder = RegExp(r'\d+(?=(절\s*부터\s*))|(?<=(절\s*부터\s*))\d+(?=절)');
   final _svrsFinder = RegExp(r'\d+(?=절)');
 
