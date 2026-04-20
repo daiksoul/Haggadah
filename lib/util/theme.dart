@@ -130,6 +130,9 @@ ThemeData theme = ThemeData(
   dividerTheme: DividerThemeData(color: Colors.black),
   colorScheme: ColorScheme.fromSwatch(primarySwatch: mainColor)
       .copyWith(secondary: mainColor),
+  snackBarTheme: SnackBarThemeData(
+    actionTextColor:  mainColor[500]
+  ),
 );
 
 ThemeData darkTheme = ThemeData(
@@ -248,6 +251,9 @@ ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSwatch(
           primarySwatch: dMainColor, brightness: Brightness.dark)
       .copyWith(secondary: dMainColor),
+  snackBarTheme: SnackBarThemeData(
+    actionTextColor:  mainColor[500],
+  ),
 );
 
 MaterialColor mainColor = const MaterialColor(
