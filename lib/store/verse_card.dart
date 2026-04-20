@@ -353,19 +353,22 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                               final removed = _collect.verses.removeAt(i);
                               final removedId = i;
                               final removedT = _verseList.removeAt(i);
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                    "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
-                                action: SnackBarAction(
-                                  label: "취소",
-                                  onPressed: () {
-                                    setState(() {
-                                      _collect.verses.insert(removedId, removed);
-                                      _verseList.insert(i, removedT);
-                                    });
-                                  },
+                              final controller = ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      "${removed.getShortName()}절을 ${_collect.title}에서 제거하였습니다."),
+                                  action: SnackBarAction(
+                                    label: "취소",
+                                    onPressed: () {
+                                      setState(() {
+                                        _collect.verses.insert(removedId, removed);
+                                        _verseList.insert(i, removedT);
+                                      });
+                                    },
+                                  ),
                                 ),
-                              ));
+                              );
+                              Future.delayed(const Duration(seconds: 1), () => controller.close());
                             });
                           },
                         ),
