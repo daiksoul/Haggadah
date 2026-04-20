@@ -24,18 +24,18 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => SearchManager(),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('검색'),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('검색'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          body: Consumer<SearchManager>(builder: (context, state, _) {
+        ),
+        body: SafeArea(
+          child: Consumer<SearchManager>(builder: (context, state, _) {
             return CustomScrollView(
               slivers: [
                 const SliverResizingHeader(

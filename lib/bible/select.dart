@@ -25,27 +25,27 @@ class BookSelectPageState extends State<BookSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return Scaffold(
+    appBar: AppBar(
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, "/search");
-            },
-            icon: Icon(Icons.search),
-          ),
-        ],
+        onPressed: () {
+          Navigator.pop(context);
+        },
       ),
-      body: Column(
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, "/search");
+          },
+          icon: Icon(Icons.search),
+        ),
+      ],
+    ),
+    body: SafeArea(
+      child: Column(
         children: [
           const SizedBox(
             height: 100,
@@ -163,8 +163,8 @@ class BookSelectPageState extends State<BookSelectPage> {
           ),
         ],
       ),
-    )
-    );
+    ),
+        );
   }
 }
 
@@ -182,18 +182,18 @@ class ChapterSelectState extends State<ChapterSelectPage> {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
     currBook =
         (ModalRoute.of(context)?.settings.arguments as Book?) ?? Book.gen;
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(currBook.kor),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(currBook.kor),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: MediaQuery.withNoTextScaling(
+      ),
+      body: SafeArea(
+        child: MediaQuery.withNoTextScaling(
           child: GridView(
             padding: const EdgeInsets.all(5),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

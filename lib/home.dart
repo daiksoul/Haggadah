@@ -16,9 +16,9 @@ class HomeState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
-    return SafeArea(
-      child: Scaffold(
-        body: ListView(
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
           children: [
             const SizedBox(
               height: 50,
@@ -89,39 +89,39 @@ class HomeState extends State<HomePage> {
             )
           ],
         ),
-        floatingActionButton: SpeedDial(
-          openCloseDial: speedDialOpen,
-          elevation: 1.0,
-          icon: Icons.menu,
-          children: [
-            labeledSpeedDialChild(
-              context,
-              label: '설정',
-              icon: Icon(
-                Icons.settings,
-                color:
-                    Theme.of(context).floatingActionButtonTheme.foregroundColor,
-              ),
-              onTap: () {
-                speedDialOpen.value = false;
-                Navigator.pushNamed(context, '/settings');
-              },
+      ),
+      floatingActionButton: SpeedDial(
+        openCloseDial: speedDialOpen,
+        elevation: 1.0,
+        icon: Icons.menu,
+        children: [
+          labeledSpeedDialChild(
+            context,
+            label: '설정',
+            icon: Icon(
+              Icons.settings,
+              color:
+                  Theme.of(context).floatingActionButtonTheme.foregroundColor,
             ),
-            labeledSpeedDialChild(
-              context,
-              label: '프로필',
-              icon: Icon(
-                Icons.person,
-                color:
-                    Theme.of(context).floatingActionButtonTheme.foregroundColor,
-              ),
-              onTap: () {
-                speedDialOpen.value = false;
-                Navigator.pushNamed(context, "/login");
-              },
+            onTap: () {
+              speedDialOpen.value = false;
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+          labeledSpeedDialChild(
+            context,
+            label: '프로필',
+            icon: Icon(
+              Icons.person,
+              color:
+                  Theme.of(context).floatingActionButtonTheme.foregroundColor,
             ),
-          ],
-        ),
+            onTap: () {
+              speedDialOpen.value = false;
+              Navigator.pushNamed(context, "/login");
+            },
+          ),
+        ],
       ),
     );
   }

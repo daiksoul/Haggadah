@@ -105,31 +105,31 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
           });
         }
       },
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              "${bookNChap.book.kor} ${bookNChap.chapter}장",
-              textAlign: TextAlign.center,
-            ),
-            leading: (_selectMode)
-                ? IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      setState(() {
-                        _exitSelectMode();
-                      });
-                    })
-                : IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new),
-                    onPressed: () {
-                      Navigator.popUntil(context, (route) {
-                        return route.settings.name == "/chapters";
-                      });
-                    },
-                  ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "${bookNChap.book.kor} ${bookNChap.chapter}장",
+            textAlign: TextAlign.center,
           ),
-          bottomNavigationBar: DecoratedBox(
+          leading: (_selectMode)
+              ? IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _exitSelectMode();
+                    });
+                  })
+              : IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new),
+                  onPressed: () {
+                    Navigator.popUntil(context, (route) {
+                      return route.settings.name == "/chapters";
+                    });
+                  },
+                ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
             ),
@@ -240,7 +240,9 @@ class VerseState extends State<VersePage> with WidgetsBindingObserver {
               ],
             ),
           ),
-          body: ListView(
+        ),
+        body: SafeArea(
+          child: ListView(
             children: [
               ...List.generate(
                 _verses.length,

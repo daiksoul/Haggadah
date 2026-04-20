@@ -145,152 +145,152 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
     return PopScope(
       onPopInvokedWithResult: (val, _) {},
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(_collect.title),
-            actions: [
-              StreamBuilder<PlaybackState>(
-                stream: _tts?.audioHandler.playbackState,
-                builder: (context, snapshot) {
-                  final playing = snapshot.data?.playing == true;
-                  return IconButton(
-                    icon: Icon(!playing
-                        ? Icons.play_circle_outline
-                        : Icons.stop_circle_outlined),
-                    onPressed: !playing
-                        ? () {
-                            _tts?.audioHandler.play();
-                          }
-                        : () {
-                            _tts?.audioHandler.pause();
-                          },
-                  );
-                },
-              ),
-              PopupMenuButton<int>(
-                position: PopupMenuPosition.under,
-                onSelected: (value) {
-                  if (value == 0) {
-                    Navigator.pushNamed(context, "/practice",
-                        arguments: _collect);
-                  } else {
-                    Navigator.pushNamed(context, "/test", arguments: _collect);
-                  }
-                },
-                icon: const Icon(Icons.checklist),
-                itemBuilder: (context) => [
-                  PopupMenuItem<int>(
-                    value: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(Icons.record_voice_over),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text("수동 검사")
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(Icons.mic),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text("자동 검사"),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              // IconButton(
-              //   icon: Icon(
-              //       _cExpaneded ? Icons.close_fullscreen : Icons.open_in_full),
-              //   onPressed: () {
-              //
-              //     setState(() {
-              //       _cExpaneded = !_cExpaneded;
-              //       for (var i = 0; i < _verseList.length; i++) {
-              //         _expansion[i] = _cExpaneded;
-              //       }
-              //       Future.delayed(Duration.zero, () async {
-              //         for(final t in _expControllers){
-              //           _cExpaneded ? t.collapse() : t.expand();
-              //           await Future.delayed(const Duration(milliseconds: 10));
-              //         }
-              //       });
-              //
-              //     });
-              //     // _listkey.currentState?.setState(() {});
-              //   },
-              // ),
-              IconButton(
-                icon: const Icon(
-                  Icons.edit,
-                ),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        final controller = TextEditingController();
-                        final formKey = GlobalKey<FormState>();
-                        controller.text = _collect.title;
-                        return AlertDialog(
-                          title: const Text("이름 변경하기"),
-                          content: Form(
-                            key: formKey,
-                            child: TextFormField(
-                              decoration:
-                                  const InputDecoration(labelText: "새로운 이름"),
-                              controller: controller,
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return "이름을 입력해야 합니다.";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("취소"),
-                            ),
-                            Consumer<AppStorageState>(
-                              builder: (context, state, _) {
-                                return TextButton(
-                                  onPressed: () {
-                                    if (formKey.currentState!.validate()) {
-                                      Navigator.pop(context);
-                                      setState(() {
-                                        _collect.title = controller.text;
-                                        state.update(context, _collect);
-                                      });
-                                    }
-                                  },
-                                  child: const Text("저장"),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      });
-                },
-              )
-            ],
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
-              onPressed: () {
-                Navigator.pop(context, _collect);
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_collect.title),
+          actions: [
+            StreamBuilder<PlaybackState>(
+              stream: _tts?.audioHandler.playbackState,
+              builder: (context, snapshot) {
+                final playing = snapshot.data?.playing == true;
+                return IconButton(
+                  icon: Icon(!playing
+                      ? Icons.play_circle_outline
+                      : Icons.stop_circle_outlined),
+                  onPressed: !playing
+                      ? () {
+                          _tts?.audioHandler.play();
+                        }
+                      : () {
+                          _tts?.audioHandler.pause();
+                        },
+                );
               },
             ),
+            PopupMenuButton<int>(
+              position: PopupMenuPosition.under,
+              onSelected: (value) {
+                if (value == 0) {
+                  Navigator.pushNamed(context, "/practice",
+                      arguments: _collect);
+                } else {
+                  Navigator.pushNamed(context, "/test", arguments: _collect);
+                }
+              },
+              icon: const Icon(Icons.checklist),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      Icon(Icons.record_voice_over),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text("수동 검사")
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      Icon(Icons.mic),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text("자동 검사"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // IconButton(
+            //   icon: Icon(
+            //       _cExpaneded ? Icons.close_fullscreen : Icons.open_in_full),
+            //   onPressed: () {
+            //
+            //     setState(() {
+            //       _cExpaneded = !_cExpaneded;
+            //       for (var i = 0; i < _verseList.length; i++) {
+            //         _expansion[i] = _cExpaneded;
+            //       }
+            //       Future.delayed(Duration.zero, () async {
+            //         for(final t in _expControllers){
+            //           _cExpaneded ? t.collapse() : t.expand();
+            //           await Future.delayed(const Duration(milliseconds: 10));
+            //         }
+            //       });
+            //
+            //     });
+            //     // _listkey.currentState?.setState(() {});
+            //   },
+            // ),
+            IconButton(
+              icon: const Icon(
+                Icons.edit,
+              ),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      final controller = TextEditingController();
+                      final formKey = GlobalKey<FormState>();
+                      controller.text = _collect.title;
+                      return AlertDialog(
+                        title: const Text("이름 변경하기"),
+                        content: Form(
+                          key: formKey,
+                          child: TextFormField(
+                            decoration:
+                                const InputDecoration(labelText: "새로운 이름"),
+                            controller: controller,
+                            validator: (val) {
+                              if (val == null || val.isEmpty) {
+                                return "이름을 입력해야 합니다.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("취소"),
+                          ),
+                          Consumer<AppStorageState>(
+                            builder: (context, state, _) {
+                              return TextButton(
+                                onPressed: () {
+                                  if (formKey.currentState!.validate()) {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      _collect.title = controller.text;
+                                      state.update(context, _collect);
+                                    });
+                                  }
+                                },
+                                child: const Text("저장"),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+            )
+          ],
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context, _collect);
+            },
           ),
-          body: Theme(
+        ),
+        body: SafeArea(
+          child: Theme(
             data: Theme.of(context).copyWith(
               dividerColor: Colors.transparent,
               expansionTileTheme: const ExpansionTileThemeData(

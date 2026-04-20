@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 ThemeData theme = ThemeData(
@@ -55,6 +56,12 @@ ThemeData theme = ThemeData(
       color: Colors.black,
       fontWeight: FontWeight.bold,
       fontSize: 20,
+    ),
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.light,
+      statusBarColor: Colors.white,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -182,6 +189,11 @@ ThemeData darkTheme = ThemeData(
       color: Colors.white,
       fontWeight: FontWeight.bold,
       fontSize: 20,
+    ),
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.dark,
+      statusBarColor: Colors.black,
+      systemNavigationBarColor: Colors.black,
     ),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
