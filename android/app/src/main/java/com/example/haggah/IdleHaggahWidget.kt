@@ -113,6 +113,20 @@ class IdleHaggahWidget : AppWidgetProvider() {
 
         val database = openDatabase(context)
 
+        var chimrye = false
+        var haggah = false
+        val settingFile = File("$internalStorageDir/app_flutter/settings.json")
+        if (settingFile.exists()) {
+            val fileJson = JSONTokener(settingFile.readLines().joinToString("\n")).nextValue() as JSONObject
+
+            if (fileJson.has("chimrye")) {
+                chimrye = fileJson.getBoolean("chimrye")
+            }
+            if (fileJson.has("haggah")) {
+                haggah = fileJson.getBoolean("haggah")
+            }
+        }
+
         val fileNames = File("$internalStorageDir/app_flutter/collections").listFiles()?.map { v -> v.nameWithoutExtension }
 
         if (fileNames?.isEmpty() == true) {
@@ -189,7 +203,7 @@ class IdleHaggahWidget : AppWidgetProvider() {
         return DataObj(
             title,
             "${BibleData.shortNames[book]} $chapter : ${BibleData.intArrToString(verses)}",
-            contents.joinToString(" ") { it.substring(0,it.length-1) }
+            contents.joinToString(" ") { parseVerseDataMin( it.substring(0,it.length-1), chimrye = chimrye, haggah = haggah) }
 //            contents.joinToString("")
 //            fileNames?.joinToString(" ").toString()
         )
@@ -294,4 +308,17 @@ internal object BibleData {
 
         return v
     }
+}
+
+fun parseVerseDataMin(data: String, chimrye: Boolean = false, haggah: Boolean = false): String {
+    var copy = data
+    if (chimrye) copy = copy.replace("세례", "침례");
+    if (haggah) {
+        copy = copy
+            .replace("묵상이", "하가가")
+            .replace("묵상", "하가");
+    }
+    return copy
+        .replace(Regex("^\\[[^\\[]*]|어떤 사본에는.*"), "")
+        .trim();
 }
