@@ -13,7 +13,10 @@ String parseVerseData(String data, {bool chimrye = false, bool haggah = false}) 
 
 String parseVerseDataMin(String data, {bool chimrye = false, bool haggah = false}) {
   if (chimrye) data = data.replaceAll("세례", "침례");
-  if (haggah) data = data.replaceAll("묵상", "하가");
+  if (haggah) {
+    data = data.replaceAll("묵상이", "하가가")
+        .replaceAll("묵상", "하가");
+  }
   return data
       .replaceAllMapped(
           RegExp(r'^\[[^\[]*\]|어떤 사본에는.*'), (_) => '')
