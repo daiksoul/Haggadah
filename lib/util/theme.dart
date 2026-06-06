@@ -78,8 +78,11 @@ ThemeData theme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(3))),
+      elevation: const WidgetStatePropertyAll(0),
       textStyle: const WidgetStatePropertyAll(TextStyle(color: Colors.black)),
       backgroundColor: WidgetStatePropertyAll(mainColor[100]),
+      foregroundColor: WidgetStatePropertyAll(mainColor[900])
     ),
   ),
   iconButtonTheme: IconButtonThemeData(
@@ -137,6 +140,20 @@ ThemeData theme = ThemeData(
       .copyWith(secondary: mainColor),
   snackBarTheme: SnackBarThemeData(
     actionTextColor:  mainColor[500]
+  ),
+  menuTheme: MenuThemeData(
+    style: MenuStyle(
+      padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 10, vertical: 5)
+      ),
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+      backgroundColor: const WidgetStatePropertyAll(Colors.white),
+      side: WidgetStatePropertyAll(
+        BorderSide(
+            color: mainColor[200]!
+        ),
+      ),
+    ),
   ),
 );
 
@@ -218,8 +235,11 @@ ThemeData darkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(5))),
+      elevation: WidgetStatePropertyAll(0),
       textStyle: const WidgetStatePropertyAll(TextStyle(color: Colors.white)),
       backgroundColor: WidgetStatePropertyAll(dMainColor[100]),
+      foregroundColor: WidgetStatePropertyAll(dMainColor[900])
     ),
   ),
   iconButtonTheme: IconButtonThemeData(
@@ -264,6 +284,20 @@ ThemeData darkTheme = ThemeData(
   snackBarTheme: SnackBarThemeData(
     actionTextColor:  mainColor[500],
   ),
+  menuTheme: MenuThemeData(
+    style: MenuStyle(
+      padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 10, vertical: 5)
+      ),
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+      backgroundColor: const WidgetStatePropertyAll(Colors.black),
+      side: WidgetStatePropertyAll(
+        BorderSide(
+          color: dMainColor[200]!
+        )
+      )
+    )
+  )
 );
 
 MaterialColor mainColor = const MaterialColor(

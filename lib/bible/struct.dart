@@ -254,3 +254,44 @@ class HexColor extends Color {
 
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
+
+Future<bool> validateAddress(Book book, int chapter, String verses) async {
+  final vrs = stringToNumberArray(verses);
+
+  final map = await DBManager.database.rawQuery("SELECT MAX(ZVERSE_NUMBER) as max FROM ZVERSE WHERE ZTOCHAPTER = (SELECT Z_PK FROM ZCHAPTER WHERE ZCHAPTER_NUMBER = $chapter AND ZTOBOOK = (SELECT Z_PK FROM ZBOOK WHERE ZBOOK_INDEX=${book.index+1}))");
+  final max = map[0]["max"] as int;
+
+  if (max == null) return false;
+
+  return !vrs.any((t) => t > max || t < 1 );
+}
+
+
+List<int> stringToNumberArray(String input) {
+  try {
+    final toReturn = Set<int>();
+
+    final indices = input.split(",");
+
+    for (final idx in indices) {
+      if (idx.isEmpty) continue;
+      if (idx.contains("-")) {
+        final [one, two] = idx.split("-");
+
+        for (var i = int.parse(one); i <= int.parse(two); i++) {
+          toReturn.add(i);
+        }
+
+      } else {
+        toReturn.add(int.parse(idx));
+      }
+    }
+
+    final fin = toReturn.toList();
+    fin.sort();
+    return fin;
+  }
+  catch (e) {
+    return [9999];
+  }
+}
