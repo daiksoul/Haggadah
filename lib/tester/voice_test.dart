@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/dat.dart';
 import 'package:haggah/bible/struct.dart';
+import 'package:haggah/custom_selectable_text/custom_selectable_text.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -20,9 +21,14 @@ class VocalTestPage extends StatefulWidget {
 class VocalTestState extends State<VocalTestPage> {
   bool _loaded = false;
   final List<MultiVerseTestForm> _list = [];
+  final List<MultiVerseTestForm> _unsub = [];
   final List<MultiVerseTestForm> _rigt = [];
   final List<String> _wron = [];
   bool _listening = false;
+
+  int _selectionStart = -1;
+  int _selectionEnd = -1;
+  final _cursorNode = FocusNode();
 
   Answer state = Answer.pasiv;
 
@@ -45,6 +51,7 @@ class VocalTestState extends State<VocalTestPage> {
     Future.delayed(Duration.zero, () async {
       _list.clear();
       _rigt.clear();
+      _unsub.clear();
       final vc = ModalRoute.of(context)!.settings.arguments as VerseCollection;
       for (final mv in vc.verses) {
         _list.add(await MultiVerseTestForm.getFromMultiVerse(mv));
@@ -101,228 +108,305 @@ class VocalTestState extends State<VocalTestPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: (state == Answer.pasiv)
-          ? Colors.grey.shade900
-          : ((state == Answer.right)
-              ? Colors.green.shade300
-              : Colors.red.shade300),
-      body: (_loaded)
-          ? LayoutBuilder(
-              builder: (context, constraints) {
-                return Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: SizedBox(
-                    height: constraints.maxHeight,
-                    width: constraints.maxWidth,
-                    child: Stack(
-                      children: [
-                        (_list.isNotEmpty)
-                            ? Align(
-                                alignment: Alignment.topCenter,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: (state == Answer.pasiv)
+            ? Colors.grey.shade900
+            : ((state == Answer.right)
+                ? Colors.green.shade300
+                : Colors.red.shade300),
+        body: (_loaded)
+            ? LayoutBuilder(
+                builder: (context, constraints) {
+                  return Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth,
+                      child: Stack(
+                        children: [
+                          if (_list.isNotEmpty && _spoken.isEmpty)
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Text("텍스트를 길게 눌러 수정하거나 삭제하세요", style: TextStyle(color: Colors.white.withAlpha(100)),),
+                            ),
+                          
+                          (_list.isNotEmpty)
+                              ? Align(
+                                  alignment: Alignment.topCenter,
+                                  child: CustomSelectableText(
+                                    _spoken,
+                                    focusNode: _cursorNode,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    onSelectionChanged: (sel, _) {
+                                      _selectionStart = sel.start;
+                                      _selectionEnd = sel.end;
+                                    },
+                                    showCursor: true,
+                                    items: [
+                                      CustomSelectableTextItem.icon(
+                                        icon: const Icon(Icons.backspace_outlined),
+                                        controlType: SelectionControlType.other,
+                                        onPressed: (start, end) {
+                                            setState(() {
+                                              _spoken = _spoken.replaceRange(start, end, "");
+                                            });
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                )
+                              : Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 100),
+                                  child: ListView(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text("정답 ${_rigt.length}개",
+                                            style: TextStyle(
+                                              color: Colors.green.shade300,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold
+                                            )),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ...List.generate(
+                                          _rigt.length,
+                                          (index) => Text(
+                                                _rigt[index]
+                                                    .multiVerse
+                                                    .getShortName(),
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              )),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text("오답 ${_wron.length}회",
+                                            style: TextStyle(
+                                              color: Colors.red.shade300,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ...List.generate(_wron.length, (index) {
+                                        return Text(
+                                          '${_wron[index]}\n',
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        );
+                                      }),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text("미제출 ${_unsub.length}개",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ...List.generate(_unsub.length, (index) {
+                                        return Text(
+                                            _unsub[index]
+                                                .multiVerse
+                                                .getShortName(),
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                ),
+      
+                          if (_list.isNotEmpty)
+                            Align(
+                              alignment: AlignmentGeometry.bottomCenter,
+                            // Positioned(
+                            //   bottom: 400,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadiusGeometry.circular(5),
+                                  color: Color(0x88000000),
+                                ),
+                                padding: const EdgeInsets.all(15),
+                                margin: const EdgeInsets.only(bottom: 150),
                                 child: Text(
-                                  _spoken + _buffer,
+                                    _buffer,
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                      color: Colors.white, fontSize: 20),
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                  ),
                                 ),
                               )
-                            : Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 0, 0, 100),
-                                child: ListView(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Text("정답 ${_rigt.length}개",
-                                          style: TextStyle(
-                                            color: Colors.green.shade300,
-                                            fontSize: 20,
-                                          )),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    ...List.generate(
-                                        _rigt.length,
-                                        (index) => Text(
-                                              _rigt[index]
-                                                  .multiVerse
-                                                  .getShortName(),
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            )),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Text("오답 ${_wron.length}회",
-                                          style: TextStyle(
-                                            color: Colors.red.shade300,
-                                            fontSize: 20,
-                                          )),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    ...List.generate(_wron.length, (index) {
-                                      return Text(
-                                        '${_wron[index]}\n',
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              ),
-                        if (_list.isNotEmpty)
-                          Align(
-                            alignment: Alignment.center,
-                            child: Consumer<AppSpeechTextState>(
-                              builder: (context, state, _) {
-                                return MaterialButton(
-                                  onPressed: (!_listening)
-                                      ? () {
-                                          setState(() {
-                                            _listening = true;
-                                          });
-                                          Timer.periodic(
-                                            const Duration(milliseconds: 10),
-                                            (a) => timerCallback(a, state),
-                                          );
-                                          state.start((res) {
-                                            print(res.recognizedWords);
-                                            setState(() {
-                                              _buffer = res.recognizedWords;
-                                            });
-                                          });
-                                        }
-                                      : () {
-                                          setState(() {
-                                            _listening = false;
-                                          });
-                                          state.stop();
-                                        },
-                                  color: Colors.redAccent,
-                                  shape: const CircleBorder(),
-                                  height: 100,
-                                  minWidth: 100,
-                                  child: Icon(
-                                    _listening ? Icons.mic : Icons.mic_off,
-                                    size: 50,
-                                    color: Colors.white,
-                                  ),
-                                );
-                              },
                             ),
-                          ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: SizedBox(
-                            width: constraints.maxWidth * 0.6,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                MaterialButton(
-                                  onPressed: () {
-                                    if (_list.isNotEmpty) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          content: const Text("시험을 종료하시겠습니까?"),
-                                          actions: [
-                                            TextButton(
-                                              style: Theme.of(context)
-                                                  .textButtonTheme
-                                                  .style,
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text("취소"),
-                                            ),
-                                            Consumer<AppSpeechTextState>(
-                                              builder: (context, state, _) {
-                                                return TextButton(
-                                                  onPressed: () {
-                                                    _listening = false;
-                                                    state.stop();
-                                                    Navigator.pop(context);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  style: Theme.of(context)
-                                                      .textButtonTheme
-                                                      .style,
-                                                  child: const Text("확인"),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  shape: const CircleBorder(),
-                                  color: Colors.grey,
-                                  height: 75,
-                                  minWidth: 75,
-                                  child: const Icon(
-                                    Icons.clear,
-                                    size: 37,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                if (_list.isNotEmpty)
+      
+
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SizedBox(
+                              width: constraints.maxWidth * 0.6,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
                                   MaterialButton(
                                     onPressed: () {
-                                      setState(() {
-                                        _spoken = "";
-                                        _buffer = "";
-                                      });
+                                      if (_list.isNotEmpty) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            content: const Text("시험을 종료하시겠습니까?"),
+                                            actions: [
+                                              TextButton(
+                                                style: Theme.of(context)
+                                                    .textButtonTheme
+                                                    .style,
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text("취소"),
+                                              ),
+                                              Consumer<AppSpeechTextState>(
+                                                builder: (context, state, _) {
+                                                  return TextButton(
+                                                    onPressed: () {
+                                                      _listening = false;
+                                                      state.stop();
+                                                      Navigator.pop(context);
+                                                      _unsub.addAll(_list);
+                                                      _list.clear();
+                                                    },
+                                                    style: Theme.of(context)
+                                                        .textButtonTheme
+                                                        .style,
+                                                    child: const Text("확인"),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        Navigator.pop(context);
+                                      }
                                     },
                                     shape: const CircleBorder(),
                                     color: Colors.grey,
                                     height: 75,
                                     minWidth: 75,
-                                    child: const Icon(
-                                      Icons.refresh,
+                                    child: Icon(
+                                      _list.isNotEmpty ? Icons.clear : Icons.arrow_back_ios_new,
                                       size: 37,
                                       color: Colors.white,
                                     ),
                                   ),
-                              ],
+                                  if (_list.isNotEmpty)
+                                    MaterialButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _spoken = "";
+                                          _buffer = "";
+                                        });
+                                      },
+                                      shape: const CircleBorder(),
+                                      color: Colors.grey,
+                                      height: 75,
+                                      minWidth: 75,
+                                      child: const Icon(
+                                        Icons.refresh,
+                                        size: 37,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  if (_list.isNotEmpty)
+                                    Consumer<AppSpeechTextState>(
+                                      builder: (context, state, _) {
+                                        return MaterialButton(
+                                          onPressed: () {
+                                            if (!_listening) {
+                                              setState(() {
+                                                _listening = true;
+                                              });
+                                              Timer.periodic(
+                                                const Duration(milliseconds: 1),
+                                                    (a) => timerCallback(a, state),
+                                              );
+                                              state.start((res) {
+                                                // print(res.recognizedWords);
+                                                setState(() {
+                                                  _buffer = res.recognizedWords;
+                                                });
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _listening = false;
+                                              });
+                                              state.stop();
+                                            }
+                                          },
+                                          color: _listening ? Colors.redAccent : Colors.grey,
+                                          shape: const CircleBorder(),
+                                          height: 75,
+                                          minWidth: 75,
+                                          child: Icon(
+                                            _listening ? Icons.mic : Icons.mic_off,
+                                            size: 37,
+                                            color: Colors.white,
+                                          ),
+                                        );
+                                      },
+                                    )
+                                ],
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              )
+            : LayoutBuilder(
+                builder: (context, constraints) {
+                  return SizedBox(
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
+                    child: Stack(
+                      children: [
+                        DecoratedBox(
+                          decoration: BoxDecoration(color: Colors.grey.shade900),
+                        ),
+                        const Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "구절을 불러오는 중입니다...",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
-            )
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                return SizedBox(
-                  height: constraints.maxHeight,
-                  width: constraints.maxWidth,
-                  child: Stack(
-                    children: [
-                      DecoratedBox(
-                        decoration: BoxDecoration(color: Colors.grey.shade900),
-                      ),
-                      const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "구절을 불러오는 중입니다...",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+      ),
     );
   }
 
@@ -331,7 +415,14 @@ class VocalTestState extends State<VocalTestPage> {
       if (state.speech.lastStatus == 'done') {
         setState(() {
           if (_buffer.isNotEmpty) {
-            _spoken += _buffer;
+            if ((_selectionStart == -1 && _selectionEnd == -1) || _spoken.isEmpty) {
+              _spoken = "${_spoken.trim()} $_buffer";
+            } else {
+                _spoken = "${_spoken.substring(0, _selectionStart).trim()} $_buffer ${_spoken.substring(_selectionEnd).trim()}";
+            }
+            _selectionStart = -1;
+            _selectionEnd = -1;
+            _cursorNode.unfocus();
           }
           _buffer = "";
 

@@ -275,12 +275,13 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                   ),
                   menuDivider(),
                   PopupTile(
-                    onPressed: () {
-                      _menuController.close();
-                      Navigator.pushNamed(context, "/practice", arguments: _collect);
-                    },
+                    // onPressed: () {
+                    //   _menuController.close();
+                    //   Navigator.pushNamed(context, "/practice", arguments: _collect);
+                    // },
+                    onPressed: null,
                     leading: Icons.fact_check_outlined,
-                    text: '수동 검사',
+                    text: '(공사중)',
                   ),
                   PopupTile(
                     onPressed: () {
@@ -288,7 +289,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
                       Navigator.pushNamed(context, "/test", arguments: _collect);
                     },
                     leading: Icons.multitrack_audio,
-                    text: '자동 검사',
+                    text: '음성 검사',
                   ),
                 ],
             ),
