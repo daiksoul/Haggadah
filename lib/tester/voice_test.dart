@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:diff_match_patch/diff_match_patch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:haggah/bible/dat.dart';
@@ -23,7 +24,7 @@ class VocalTestState extends State<VocalTestPage> {
   final List<MultiVerseTestForm> _list = [];
   final List<MultiVerseTestForm> _unsub = [];
   final List<MultiVerseTestForm> _rigt = [];
-  final List<String> _wron = [];
+  final List<List<String>> _wron = <List<String>>[];
   bool _listening = false;
 
   int _selectionStart = -1;
@@ -202,11 +203,8 @@ class VocalTestState extends State<VocalTestPage> {
                                         height: 10,
                                       ),
                                       ...List.generate(_wron.length, (index) {
-                                        return Text(
-                                          '${_wron[index]}\n',
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                        );
+                                        return diffs(_wron[index][0], _wron[index][1], _wron[index][2]);
+                                        // return Text("g : ${_wron[index][0]}\nt : ${_wron[index][1]}");
                                       }),
                                       const SizedBox(
                                         height: 20,
@@ -378,6 +376,7 @@ class VocalTestState extends State<VocalTestPage> {
                               ),
                             ),
                           ),
+                          // diffs("안녕하세요 만나서 매우 반갑습니다", "안녕하세요오늘만나서 정말 반갑습니다")
                         ],
                       ),
                     ),
@@ -447,7 +446,7 @@ class VocalTestState extends State<VocalTestPage> {
               } else {
                 if (this.state == Answer.pasiv) {
                   this.state = Answer.wrong;
-                  _wron.add(_spoken);
+                  _wron.add([search.multiVerse.getShortName(), submit, search.getAllVerseReadable()]);
                   HapticFeedback.heavyImpact();
                 }
               }
@@ -465,6 +464,64 @@ class VocalTestState extends State<VocalTestPage> {
     } else {
       timer.cancel();
     }
+  }
+
+  Widget diffs(String title, String text1, String text2) {
+    final diffs = diff(text1, text2.trim());
+
+    final spanList = <TextSpan>[];
+
+    for (final diffie in diffs) {
+      if (diffie.text == " " && diffie.operation != 0) {
+        spanList.add(
+          TextSpan(
+            text: diffie.text,
+            style: const TextStyle(
+              backgroundColor: Colors.transparent
+            )
+          )
+        );
+      } else {
+        spanList.add(
+          TextSpan(
+            text: diffie.text,
+            style: TextStyle(
+              backgroundColor: switch (diffie.operation) {
+                1 => Colors.green.withAlpha(128),
+                -1 => Colors.red.withAlpha(128),
+                _ => Colors.transparent
+              }
+            )
+          )
+        );
+      }
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        borderRadius: BorderRadius.circular(5)
+      ),
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 10, vertical: 5),
+      child: Text.rich(
+        TextSpan(
+          style: TextStyle(
+            color: Colors.white
+          ),
+          children: [
+            TextSpan(
+              text: "$title\n",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                height: 1.8
+              )
+            ),
+            ...spanList,
+          ]
+        ),
+      ),
+    );
+
   }
 }
 
