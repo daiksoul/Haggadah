@@ -270,6 +270,13 @@ class SettingsState extends State<SettingsPage> {
                               value: state.expandByDefault,
                               onChanged: (v) {
                                 state.expandByDefault = v;
+                                for (final t in eControllerList) {
+                                  if (v) {
+                                    t.expand();
+                                  } else {
+                                    t.collapse();
+                                  }
+                                }
                               },
                             );
                           },
@@ -311,6 +318,8 @@ class SettingsState extends State<SettingsPage> {
     );
   }
 
+  final eControllerList = List.generate(3, (_) => ExpansibleController());
+
   List<Widget> lineDivider() => [
         const SizedBox(height: 10),
         const Padding(
@@ -346,6 +355,7 @@ class SettingsState extends State<SettingsPage> {
               ),
             ),
             child: ExpansionTile(
+              controller: eControllerList[i],
               initiallyExpanded: true,
               controlAffinity: ListTileControlAffinity.leading,
               expandedAlignment: Alignment.centerLeft,
