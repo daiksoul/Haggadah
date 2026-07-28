@@ -2,11 +2,23 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:haggah/setting/settings_model.dart';
 
-class AudioPlayHandler extends BaseAudioHandler {
+class AudioPlayHandler extends BaseAudioHandler{
   late final FlutterTts _tts;
   final List<String> _texts = [];
+  var _storageName = "";
+  var _speed = 1.0;
   var currentIndex = 0;
   var repeatOption = RepeatOption.noRepeat;
+
+  void updatePosition(double fraction) {
+    playbackState.add(
+      playbackState.value.copyWith(
+        bufferedPosition: mediaItem.value?.duration??Duration(milliseconds: 1500),
+        updatePosition: Duration(milliseconds: ((mediaItem.value?.duration?.inMilliseconds ?? 1500) * fraction).floor()),
+        speed: 1.0
+      ),
+    );
+  }
 
   void setTexts(List<String> newTexts) {
     _texts.clear();
@@ -14,8 +26,22 @@ class AudioPlayHandler extends BaseAudioHandler {
     currentIndex = 0;
   }
 
+  void setStorageName(String name) {
+    _storageName = name;
+  }
+
+  void setSpeedValue(double speed) {
+    _speed = speed;
+  }
+
   @override
   Future<void> play() async {
+    final [text, title] = _texts[currentIndex].split("!!!");
+
+    mediaItem.add(
+      MediaItem(id: title, title: title, album: _storageName, duration: Duration(milliseconds: (100 * ( 2 - _speed)).floor() * text.length))
+    );
+
     playbackState.add(
       playbackState.value.copyWith(
         playing: true,
@@ -25,10 +51,13 @@ class AudioPlayHandler extends BaseAudioHandler {
           MediaControl.skipToNext,
           MediaControl.stop,
         ],
+        systemActions: {
+          MediaAction.seek,
+        },
         processingState: AudioProcessingState.ready,
       ),
     );
-    _tts.speak(_texts[currentIndex]);
+    _tts.speak(text);
   }
 
   @override

@@ -30,6 +30,9 @@ class TtsState extends ChangeNotifier {
     );
     await _tts.awaitSpeakCompletion(true);
     _tts.setLanguage("ko-KR");
+    _tts.setProgressHandler((st1, start, end, st2) {
+      _playHandler.updatePosition(start/st1.length);
+    });
   }
 
   void applySettings(AppSettingState setting) {
@@ -37,7 +40,9 @@ class TtsState extends ChangeNotifier {
     _playHandler.repeatOption = setting.repeatOption;
   }
 
-  void setTexts(List<String> texts) {
+  void setData(List<String> texts, String name, [double? speed = 1.0]) {
     _playHandler.setTexts(texts);
+    _playHandler.setStorageName(name);
+    if (speed != null) _playHandler.setSpeedValue(speed);
   }
 }

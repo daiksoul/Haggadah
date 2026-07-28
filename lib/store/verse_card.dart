@@ -77,7 +77,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
               },
             )
         ]);
-        _tts?.setTexts(getTTSString());
+        _tts?.setData(getTTSString(), _collect.title, _sett.speechRate);
       },
     );
   }
@@ -102,7 +102,7 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
         )
     ]);
 
-    _tts?.setTexts(getTTSString());
+    _tts?.setData(getTTSString(), _collect.title);
   }
 
   TextSpan _generateSpan(int index) {
@@ -148,15 +148,14 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
   List<String> getTTSString() {
     final lst = <String>[];
     for (int i = 0; i < _collect.verses.length; i++) {
-      lst.add(_collect.verses[i].getName() +
-          List.generate(
+      lst.add("${_collect.verses[i].getName()}${List.generate(
             _verseList[i].length,
             (j) => parseVerseDataMin(
                 _verseList[i][j]["ZVERSE_CONTENT"].toString(),
               chimrye: _sett.chimrye,
               haggah: _sett.haggah,
             ),
-          ).join('\n'));
+          ).join('\n')}!!!${_collect.verses[i].getShortName()}");
     }
     return lst;
   }
@@ -460,10 +459,12 @@ class VerseCardState extends State<VerseCardPage> with WidgetsBindingObserver {
               onReorder: (oldIdx, newIdx) {
                 setState(
                   () {
+                    _tts?.audioHandler.stop();
                     if (oldIdx < newIdx) newIdx -= 1;
                     _collect.verses
                         .insert(newIdx, _collect.verses.removeAt(oldIdx));
                     _verseList.insert(newIdx, _verseList.removeAt(oldIdx));
+                    _tts?.setData(getTTSString(), _collect.title);
                   },
                 );
               },
