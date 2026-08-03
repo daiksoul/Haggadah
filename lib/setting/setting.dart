@@ -1,4 +1,6 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:haggah/audio/tts.dart';
 import 'package:haggah/setting/settings_model.dart';
 import 'package:haggah/util/theme.dart';
 import 'package:provider/provider.dart';
@@ -162,6 +164,57 @@ class SettingsState extends State<SettingsPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Text('음성'),
+                        Consumer2<AppSettingState,TtsState>(
+                          builder: (_, setting, tts, __) => DropdownMenu<String>(
+                            initialSelection: setting.ttsVoice,
+                            dropdownMenuEntries: [
+                              for (final g in tts.getVoices())
+                                DropdownMenuEntry(
+                                  value: g,
+                                  label: g.replaceAll(RegExp(r"ko-[kK][rR](-x)?-"), ""),
+                                ),
+                            ],
+                            onSelected: (v) {
+                              setting.ttsVoice = v ?? setting.ttsVoice;
+                            },
+                            trailingIcon: const Icon(
+                              Icons.arrow_drop_down,
+                              size: 20,
+                            ),
+                            selectedTrailingIcon: const Icon(
+                              Icons.arrow_drop_up,
+                              size: 20,
+                            ),
+                            width: 140,
+                            enableSearch: false,
+                            inputDecorationTheme: InputDecorationTheme(
+                              labelStyle: const TextStyle(fontSize: 12),
+                              constraints: BoxConstraints.tight(
+                                const Size.fromHeight(40),
+                              ),
+                              contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 15),
+                            ),
+                            menuStyle: const MenuStyle(
+                              visualDensity: VisualDensity(
+                                horizontal: 0,
+                                vertical: -1,
+                              ),
+                              padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                              elevation: WidgetStatePropertyAll(1),
+                            ),
+                            textStyle: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Text('음성 속도'),
                         Consumer<AppSettingState>(
                           builder: (_, state, __) {
@@ -177,6 +230,34 @@ class SettingsState extends State<SettingsPage> {
                                 divisions: 20,
                                 label: '${state.speechRate}',
                                 inactiveColor: Colors.grey,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('음성 높낮이'),
+                        Consumer<AppSettingState>(
+                          builder: (_, state, __) {
+                            return SizedBox(
+                              width: 150,
+                              child: Slider(
+                                value: state.voicePitch,
+                                onChanged: (val) {
+                                  state.voicePitch = val;
+                                },
+                                min: 0.5,
+                                max: 2.0,
+                                divisions: 15,
+                                label: state.voicePitch.toStringAsFixed(1),
+                                inactiveColor: Colors.grey,
+
                               ),
                             );
                           },
@@ -238,6 +319,36 @@ class SettingsState extends State<SettingsPage> {
                             ),
                             textStyle: const TextStyle(fontSize: 14),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('들어보기'),
+                        Consumer2<AppSettingState,TtsState>(
+                          builder: (_, sett, tts, __) {
+                            return StreamBuilder<PlaybackState>(
+                              stream: tts.audioHandler.playbackState,
+                              builder: (___, playback) => IconButton(
+                                onPressed: (){
+                                  if (playback.data?.playing == false) {
+                                    tts.applySettings(sett);
+                                    tts.setData(["여호와는 나의 목자시니 내게 부족함이 없으리로다!!!시 23 : 1"], "음성 미리듣기", sett.speechRate);
+                                    tts.audioHandler.play();
+                                  } else {
+                                    tts.audioHandler.stop();
+                                  }
+                                },
+                                icon: Icon(
+                                  playback.data?.playing??false ? Icons.stop_circle_outlined : Icons.play_circle_outline,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

@@ -26,39 +26,52 @@ class AppSettings {
   bool chimrye;
   bool haggah;
   double speechRate;
+  double voicePitch;
+  String ttsVoice;
   RepeatOption repeatOption;
   bool expandByDefault;
 
-  AppSettings(
-      {required this.themeMode,
-        required this.chimrye,
-        required this.haggah,
-      required this.speechRate,
-      required this.repeatOption,
-      required this.expandByDefault});
+  AppSettings({
+    required this.themeMode,
+    required this.chimrye,
+    required this.haggah,
+    required this.speechRate,
+    required this.voicePitch,
+    required this.ttsVoice,
+    required this.repeatOption,
+    required this.expandByDefault,
+  });
 
   factory AppSettings.defaultSettings() {
     return AppSettings(
-        themeMode: ThemeMode.system,
-        chimrye: false,
-        haggah: false,
-        speechRate: 1,
-        repeatOption: RepeatOption.noRepeat,
-        expandByDefault: true);
+      themeMode: ThemeMode.system,
+      chimrye: false,
+      haggah: false,
+      speechRate: 1,
+      voicePitch: 1,
+      ttsVoice: "ko-kr-x-ism-local",
+      repeatOption: RepeatOption.noRepeat,
+      expandByDefault: true,
+    );
   }
 
-  AppSettings copyWith(
-      {ThemeMode? themeMode,
-        bool? chimrye,
-        bool? haggah,
-      double? speechRate,
-      RepeatOption? repeatOption,
-      bool? expandByDefault}) {
+  AppSettings copyWith({
+    ThemeMode? themeMode,
+    bool? chimrye,
+    bool? haggah,
+    double? speechRate,
+    double? voicePitch,
+    String? ttsVoice,
+    RepeatOption? repeatOption,
+    bool? expandByDefault,
+  }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
       chimrye: chimrye ?? this.chimrye,
       haggah: haggah ?? this.haggah,
       speechRate: speechRate ?? this.speechRate,
+      voicePitch: voicePitch ?? this.voicePitch,
+      ttsVoice: ttsVoice ?? this.ttsVoice,
       repeatOption: repeatOption ?? this.repeatOption,
       expandByDefault: expandByDefault ?? this.expandByDefault,
     );
@@ -69,6 +82,8 @@ class AppSettings {
     chimrye = other.chimrye;
     haggah = other.haggah;
     speechRate = other.speechRate;
+    voicePitch = other.voicePitch;
+    ttsVoice = other.ttsVoice;
     repeatOption = other.repeatOption;
     expandByDefault = other.expandByDefault;
   }
@@ -78,6 +93,8 @@ class AppSettings {
         'chimrye': chimrye,
         'haggah': haggah,
         'speechRate': speechRate,
+        'voicePitch': voicePitch,
+        'ttsVoice': ttsVoice,
         'repeatOption': repeatOption.string,
         'expandByDefault': expandByDefault,
       };
@@ -89,6 +106,8 @@ class AppSettings {
       chimrye: map['chimrye'] as bool?,
       haggah: map['haggah'] as bool?,
       speechRate: (map['speechRate'] as num?)?.toDouble(),
+      voicePitch: (map['voicePitch'] as num?)?.toDouble(),
+      ttsVoice: map['ttsVoice'] as String?,
       repeatOption: RepeatOption.fromString(map['repeatOption'] as String?),
       expandByDefault: map['expandByDefault'] as bool?,
     );
@@ -143,6 +162,20 @@ class AppSettingState extends ChangeNotifier {
   double get speechRate => _settings.speechRate;
   set speechRate(double v) {
     _settings.speechRate = v;
+    notifyListeners();
+    debounceSettings();
+  }
+
+  double get voicePitch => _settings.voicePitch;
+  set voicePitch(double v) {
+    _settings.voicePitch = v;
+    notifyListeners();
+    debounceSettings();
+  }
+
+  String get ttsVoice => _settings.ttsVoice;
+  set ttsVoice(String s) {
+    _settings.ttsVoice = s;
     notifyListeners();
     debounceSettings();
   }

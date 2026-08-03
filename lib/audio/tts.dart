@@ -10,6 +10,7 @@ class TtsState extends ChangeNotifier {
   late AudioPlayHandler _playHandler;
   AudioHandler? _audioHandler;
   late FlutterTts _tts;
+  final _ttsVoices = <Map<String,String>>[];
 
   AudioHandler get audioHandler {
     if (_audioHandler == null) {
@@ -30,6 +31,8 @@ class TtsState extends ChangeNotifier {
     );
     await _tts.awaitSpeakCompletion(true);
     _tts.setLanguage("ko-KR");
+    _ttsVoices.clear();
+    _ttsVoices.addAll( List.of(await _tts.getVoices).map((e) => Map.of(e).map((k,v) => MapEntry(k.toString(),v.toString())) ) );
     _tts.setProgressHandler((st1, start, end, st2) {
       _playHandler.updatePosition(start/st1.length);
     });
@@ -37,6 +40,8 @@ class TtsState extends ChangeNotifier {
 
   void applySettings(AppSettingState setting) {
     _tts.setSpeechRate(setting.speechRate);
+    _tts.setPitch(setting.voicePitch);
+    _tts.setVoice({"name": setting.ttsVoice, "locale": "ko-KR" });
     _playHandler.repeatOption = setting.repeatOption;
   }
 
@@ -44,5 +49,11 @@ class TtsState extends ChangeNotifier {
     _playHandler.setTexts(texts);
     _playHandler.setStorageName(name);
     if (speed != null) _playHandler.setSpeedValue(speed);
+  }
+
+  List<String> getVoices() {
+    return _ttsVoices.where((g) =>
+    g["locale"] == "ko-KR" && g["network_required"] == "0").map((
+        a) => a["name"]??"ko-kr-x-ism-local").toList()..sort();
   }
 }

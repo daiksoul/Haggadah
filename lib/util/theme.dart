@@ -155,6 +155,9 @@ ThemeData theme = ThemeData(
       ),
     ),
   ),
+  sliderTheme: SliderThemeData(
+      tickMarkShape: SliderTickMarkShape.noTickMark
+  ),
 );
 
 ThemeData darkTheme = ThemeData(
@@ -297,7 +300,10 @@ ThemeData darkTheme = ThemeData(
         )
       )
     )
-  )
+  ),
+  sliderTheme: SliderThemeData(
+    tickMarkShape: SliderTickMarkShape.noTickMark
+  ),
 );
 
 MaterialColor mainColor = const MaterialColor(
