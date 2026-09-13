@@ -13,6 +13,7 @@ import org.json.JSONTokener
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
+import com.example.haggah.R
 
 const val GO_PREV = "com.example.haggah.GOPREV"
 const val GO_NEXT = "com.example.haggah.GONEXT"
@@ -175,15 +176,15 @@ class IdleHaggahWidget : AppWidgetProvider() {
 
         val cursor = database!!.rawQuery(
             """
-               SELECT * FROM ZVERSE 
-                    WHERE ZVERSE_NUMBER IN (${verses.joinToString(",")}) 
+               SELECT * FROM ZVERSE
+                    WHERE ZVERSE_NUMBER IN (${verses.joinToString(",")})
                     and ZTOCHAPTER = (
-                        SELECT Z_PK FROM ZCHAPTER 
-                            WHERE ZCHAPTER_NUMBER = ? 
+                        SELECT Z_PK FROM ZCHAPTER
+                            WHERE ZCHAPTER_NUMBER = ?
                             AND ZTOBOOK = (
                                 SELECT Z_PK FROM ZBOOK WHERE ZBOOK_INDEX=?
                             )
-                    ) 
+                    )
             """,
             arrayOf( "$chapter", "${book +1}")
         )
