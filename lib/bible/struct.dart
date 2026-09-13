@@ -63,6 +63,8 @@ class MultiVerse {
   /// ex) 창세기 1장 1절, 창세기 1장 2절, 창세기 1장 3절 -> 창 1 : 1-3</br>
   /// 호세아 6장 3절, 호세아 6장 6절 -> 호 6 : 3,6
   String getShortName() {
+    if (verse.isEmpty) return "오류";
+
     int tmp = verse.first.verse;
     int count = 0;
     String v = "$tmp";
@@ -90,6 +92,7 @@ class MultiVerse {
   }
 
   String getName() {
+    if (verse.isEmpty) return "오류";
     int tmp = verse.first.verse;
     int count = 0;
     String v = "${numberToText(tmp)}절";
@@ -257,6 +260,7 @@ class HexColor extends Color {
 
 Future<bool> validateAddress(Book book, int chapter, String verses) async {
   final vrs = stringToNumberArray(verses);
+  if (vrs.contains(9999) || vrs.isEmpty) return false;
 
   final map = await DBManager.database.rawQuery("SELECT MAX(ZVERSE_NUMBER) as max FROM ZVERSE WHERE ZTOCHAPTER = (SELECT Z_PK FROM ZCHAPTER WHERE ZCHAPTER_NUMBER = $chapter AND ZTOBOOK = (SELECT Z_PK FROM ZBOOK WHERE ZBOOK_INDEX=${book.index+1}))");
   final max = map[0]["max"] as int;
